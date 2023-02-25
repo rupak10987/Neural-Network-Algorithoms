@@ -1,5 +1,5 @@
 #include<iostream>
-#include<math.h> // for string streams
+#include<math.h>
 #include <string>
 #include<time.h>
 //all connected networks
