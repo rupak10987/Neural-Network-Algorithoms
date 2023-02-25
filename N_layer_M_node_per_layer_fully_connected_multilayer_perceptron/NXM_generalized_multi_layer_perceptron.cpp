@@ -9,6 +9,7 @@ class inputline//each node will contain one or more inputline
 public:
     float input;
     float weight=0.3;
+    float weight_before_update=0;
     std::string from;//for printing
     std::string to;//for printing
 };
@@ -129,7 +130,7 @@ int main()
         }
         Ep/=2;
         std::cout<<"Ep = "<<Ep<<std::endl;
-        if(Ep<=0.01)
+        if(Ep<=0.1)
             break;
 //back propagation
         for(int i=Num_of_layers-1; i>=0; i--)
@@ -148,11 +149,12 @@ int main()
                     float sum_of_sigmaK_wjk=0;
                     for(int k=0; k<Num_Of_nodes_per_layer; k++)
                     {
-                        sum_of_sigmaK_wjk+=(network[i+1][k].sigma)*(network[i+1][k].inputs[j].weight);
+                        sum_of_sigmaK_wjk+=(network[i+1][k].sigma)*(network[i+1][k].inputs[j].weight_before_update);
                     }
                     network[i][j].sigma=big_K*network[i][j].out*(1-network[i][j].out)*sum_of_sigmaK_wjk;
                     for(int k=0; k<Num_Of_nodes_per_layer; k++)
                     {
+                       network[i][j].inputs[i].weight_before_update=network[i][j].inputs[i].weight;
                         network[i][j].inputs[i].weight=network[i][j].inputs[i].weight + miu*network[i][j].sigma*network[i][j].out;
                         std::cout<<"adjusted weight of line "<<network[i][j].inputs[i].from<<" - "<<network[i][j].inputs[i].to<<" is "<<network[i][j].inputs[i].weight<<std::endl;
                     }
@@ -192,6 +194,7 @@ void adjust_wait_out_layer(class Node* rcvd,int num_of_lines)
     rcvd->sigma=big_K*rcvd->out*(1-rcvd->out)*(rcvd->expected_out-rcvd->out);
     for(int i=0; i<num_of_lines; i++)
     {
+       rcvd->inputs[i].weight_before_update=rcvd->inputs[i].weight;
         rcvd->inputs[i].weight=rcvd->inputs[i].weight + miu*rcvd->sigma*rcvd->out;
         std::cout<<"adjusted weight of line "<<rcvd->inputs[i].from<<" - "<<rcvd->inputs[i].to<<" is "<<rcvd->inputs[i].weight<<std::endl;
     }
