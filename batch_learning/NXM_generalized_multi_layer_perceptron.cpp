@@ -2,6 +2,7 @@
 #include<math.h>
 #include <string>
 #include<time.h>
+#include<vector>
 //all connected networks
 float e=2.718281828;
 class inputline//each node will contain one or more inputline
@@ -28,6 +29,7 @@ float sigmoid(float x);
 void adjust_wait_out_layer(class Node* rcvd,int num_of_lines);
 int main()
 {
+    std::vector<float> errors_collected;
     float *errors;
     float **batch;
     srand(time(NULL));
@@ -116,7 +118,7 @@ int main()
         std::cin>>network[Num_of_layers-1][i].expected_out;
     }
     int iter=0;
-    while(true)
+    while(iter<2000)
     {
         float Ep=0;
         //forward pass
@@ -153,8 +155,11 @@ int main()
         }
         Ep/=2;
         std::cout<<"Ep = "<<Ep<<std::endl;
+        errors_collected.push_back(Ep);
         if(Ep<=0.1)
+        {
             break;
+        }
 //back propagation
         for(int i=Num_of_layers-1; i>=0; i--)
         {
@@ -188,8 +193,10 @@ int main()
         std::cout<<std::endl;
     }
     std::cout<<"number of iterations taken for convergence = "<<iter<<std::endl;
-
+    for(int i=0; i < errors_collected.size(); i++)
+        std::cout<< errors_collected.at(i)<<",";
 //trial phase
+
     while(true)
     {
         std::cout<<"now give a test pattern for previous expected output"<<std::endl;
