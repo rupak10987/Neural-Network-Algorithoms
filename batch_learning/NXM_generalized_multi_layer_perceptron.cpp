@@ -1,6 +1,7 @@
 #include<iostream>
 #include<math.h>
 #include <string>
+#include <string.h>
 #include<time.h>
 #include<vector>
 //all connected networks
@@ -30,6 +31,8 @@ void adjust_wait_out_layer(class Node* rcvd,int num_of_lines);
 int main()
 {
     std::vector<float> errors_collected;
+    std::vector<float> weight1;
+    std::vector<float> weight2;
     float *errors;
     float **batch;
     srand(time(NULL));
@@ -194,7 +197,10 @@ int main()
     }
     std::cout<<"number of iterations taken for convergence = "<<iter<<std::endl;
     for(int i=0; i < errors_collected.size(); i++)
-        std::cout<< errors_collected.at(i)<<",";
+    {
+      std::cout<< errors_collected.at(i)<<",";
+    }
+    std::cout<<std::endl;
 //trial phase
 
     while(true)
