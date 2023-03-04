@@ -92,7 +92,7 @@ for(int i=0; i<num_of_row_A; i++)
     {
         for(int j=0; j<num_of_col_A; j++)
         {
-            MAT_A[i][j]=1.0/(1+pow(2.718,-10*k*MAT_A[i][j]));
+            MAT_A[i][j]=1.0/(1+pow(2.718,-1*k*MAT_A[i][j]));
         }
     }
 }

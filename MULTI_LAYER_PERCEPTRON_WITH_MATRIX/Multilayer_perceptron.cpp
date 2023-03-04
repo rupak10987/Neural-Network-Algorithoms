@@ -82,7 +82,7 @@ int main()
             }
             std::cout<<"\n";
         }
-        std::cout<<"\n\n";
+        std::cout<<"\n";
     }
 
     float ***sigmas;
@@ -97,29 +97,37 @@ int main()
         }
     }
 //learn
-    while(true)
+    int MAX_ITER=100;
+    while(MAX_ITER>=0)
     {
+
+        float k=20;
+        float **delw;
+        delw=new float*[num_of_nodes_per_layer];
+        for(int j=0; j<num_of_nodes_per_layer; j++)
+            delw[j]=new float[num_of_nodes_per_layer];
+
 //forwardpass
         for(int i=0; i<num_of_layers; i++)
         {
-//referecncing the function for teachers favour:=
+//referecncing the function for teacher's favour:=
 //void MATRIX_MUL(float** MAT_A,int num_of_row_A,int num_of_col_A,float** MAT_B,int num_of_row_B,int num_of_col_B,float** result)
             MATRIX_OPS::MATRIX_MUL(INOUTS[i],1,num_of_nodes_per_layer,WEIGHTS[i],num_of_nodes_per_layer,num_of_nodes_per_layer,INOUTS[i+1]);
-            MATRIX_OPS::MATRIX_SIGMOID_TRANSFORM(INOUTS[i+1],1,num_of_nodes_per_layer,1);
+            MATRIX_OPS::MATRIX_SIGMOID_TRANSFORM(INOUTS[i+1],1,num_of_nodes_per_layer,k);
         }
         float ep=0;
         for(int i=0; i<num_of_nodes_per_layer; i++)
         {
             ep+=pow(expected[i]-INOUTS[num_of_layers][0][i],2);
         }
-        std::cout<<"Ep = "<<ep<<std::endl;
+        std::cout<<"Ep = "<<ep<<"\n\n\n\n";
         if(ep<0.1)
             break;
-//backward//adjusting weights
+//backward_propagation//adjusting weights
         for(int i=num_of_layers-1; i>=0; i--)
         {
-            float miu=0.9;
-            float k=10;
+            float miu=0.1;
+
             //STEP1 :calculate sigma for out layer and hidden layers
             if(i==num_of_layers-1)//sigma outlayer
             {
@@ -135,19 +143,25 @@ int main()
             //STEP2: calculate transpose of the weight matric that is to be updated
             MATRIX_OPS::MATRIX_Transpose(WEIGHTS[i],num_of_nodes_per_layer,num_of_nodes_per_layer);
             //STEP3: find delW=miu*sig*op
-            float **delw;
-            delw=new float*[num_of_nodes_per_layer];
-            for(int j=0; j<num_of_nodes_per_layer; j++)
-                delw[j]=new float[num_of_nodes_per_layer];
             MATRIX_OPS::MATRIX_MUL(sigmas[i],num_of_nodes_per_layer,1,INOUTS[i+1],1,num_of_nodes_per_layer,delw);
             MATRIX_OPS::MATRIX_Constant_Multiply(delw,num_of_nodes_per_layer,num_of_nodes_per_layer,miu);
             //STEP4:weights(t+1)=weights(t)+delw
             MATRIX_OPS::MATRIX_ADD(WEIGHTS[i],num_of_nodes_per_layer,num_of_nodes_per_layer,delw,num_of_nodes_per_layer,num_of_nodes_per_layer,WEIGHTS[i]);
             //STEP5: retranspose the weight matric
             MATRIX_OPS::MATRIX_Transpose(WEIGHTS[i],num_of_nodes_per_layer,num_of_nodes_per_layer);
-            delete delw;
-        }
 
+            //visualize updated weigts to console
+            std::cout<<"updated weight matric of L"<<i<<"-L"<<i+1<<" :\n";
+            for(int j=0;j<num_of_nodes_per_layer;j++)
+            {
+                for(int l=0;l<num_of_nodes_per_layer;l++)
+                {
+                    std::cout<<WEIGHTS[i][j][l]<<" ";
+                }
+                std::cout<<std::endl;
+            } std::cout<<std::endl;
+        }
+        MAX_ITER--;
     }
 //output
     for(int i=0; i<num_of_nodes_per_layer; i++)
