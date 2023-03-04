@@ -64,7 +64,26 @@ for(int i=0; i<num_of_row_A; i++)
 }
 
 
+void MATRIX_Transpose(float** A,int num_of_row_A,int num_of_col_A)
+{
+float **R;
+R=new float*[num_of_row_A];
+for(int i=0;i<num_of_row_A;i++)
+    R[i]=new float[num_of_col_A];
+for(int i=0;i<num_of_row_A;i++)
+    for(int j=0;j<num_of_col_A;j++)
+        R[i][j]=A[j][i];
+for(int i=0;i<num_of_row_A;i++)
+    for(int j=0;j<num_of_col_A;j++)
+        A[i][j]=R[i][j];
 
+}
+void MATRIX_Constant_Multiply(float** A,int num_of_row_A,int num_of_col_A,float X)
+{
+for(int i=0;i<num_of_row_A;i++)
+    for(int j=0;j<num_of_col_A;j++)
+        A[i][j]=X*A[i][j];
+}
 
 //for neural network special
 void MATRIX_SIGMOID_TRANSFORM(float **MAT_A,int num_of_row_A,int num_of_col_A,int k)
@@ -73,7 +92,7 @@ for(int i=0; i<num_of_row_A; i++)
     {
         for(int j=0; j<num_of_col_A; j++)
         {
-            MAT_A[i][j]=1.0/(1+pow(2.718,-1*k*MAT_A[i][j]));
+            MAT_A[i][j]=1.0/(1+pow(2.718,-10*k*MAT_A[i][j]));
         }
     }
 }
