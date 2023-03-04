@@ -7,16 +7,22 @@ int main()
     srand(time(0));
     int num_of_layers;
     int num_of_nodes_per_layer;
+    int num_of_batch=1;
     std::cout<<"NUMBER OF ACTIVE LAYERS :";
     std::cin>>num_of_layers;
     std::cout<<"NUMBER OF NODES PER LAYER :";
     std::cin>>num_of_nodes_per_layer;
+    std::cout<<"NUMBER OF BATCHES TO BE LEARNT :";
+    std::cin>>num_of_batch;
     //initializing in/out and weight matrices
     float ***INOUTS;
     float ***WEIGHTS;
+    float **batch_inputs;
+
     float expected[num_of_nodes_per_layer];
     INOUTS=new float**[num_of_layers+1];
     WEIGHTS=new float**[num_of_layers];
+
     for(int i=0; i<num_of_layers+1; i++)
     {
         INOUTS[i]=new float*[1];//a row vector like [1,1,1,1]
@@ -31,15 +37,29 @@ int main()
             WEIGHTS[i][j]=new float[num_of_nodes_per_layer];
         }
     }
-    //network i/o
+//taking batch inputs;
+    batch_inputs=new float*[num_of_batch];//row num =num of batch || collumn num=num of inputs in each batch
+    for(int i=0; i<num_of_batch; i++)
+    {
+        batch_inputs[i]=new float[num_of_nodes_per_layer];
+    }
+    for(int ba=0; ba<num_of_batch; ba++)
+    {
+        for(int j=0; j<num_of_nodes_per_layer; j++)
+        {
+            std::cout<<"BATCH"<<ba<<" INPUT"<<j<<" :";
+            std::cin>>batch_inputs[ba][j];
+        }
+    }
+
+//network i/o
     for(int i=0; i<num_of_layers+1; i++)
     {
         for(int j=0; j<num_of_nodes_per_layer; j++)
         {
             if(i==0)
             {
-                std::cout<<"INPUT "<<j<<" :";
-                std::cin>>INOUTS[i][0][j];
+                INOUTS[i][0][j]=batch_inputs[0][i];//first row of batch matrix
             }
             else
                 INOUTS[i][0][j]=0;
@@ -109,17 +129,27 @@ int main()
             delw[j]=new float[num_of_nodes_per_layer];
 
 //forwardpass
-        for(int i=0; i<num_of_layers; i++)
+        float ep=0;
+        //initialize inputs from batch matrix
+        for(int ba=0; ba<num_of_batch; ba++)
         {
+            for(int bi=0; bi<num_of_nodes_per_layer; bi++)
+            {
+                INOUTS[0][0][bi]=batch_inputs[ba][bi];
+            }
+            for(int i=0; i<num_of_layers; i++)
+            {
 //referecncing the function for teacher's favour:=
 //void MATRIX_MUL(float** MAT_A,int num_of_row_A,int num_of_col_A,float** MAT_B,int num_of_row_B,int num_of_col_B,float** result)
-            MATRIX_OPS::MATRIX_MUL(INOUTS[i],1,num_of_nodes_per_layer,WEIGHTS[i],num_of_nodes_per_layer,num_of_nodes_per_layer,INOUTS[i+1]);
-            MATRIX_OPS::MATRIX_SIGMOID_TRANSFORM(INOUTS[i+1],1,num_of_nodes_per_layer,k);
-        }
-        float ep=0;
-        for(int i=0; i<num_of_nodes_per_layer; i++)
-        {
-            ep+=pow(expected[i]-INOUTS[num_of_layers][0][i],2);
+                MATRIX_OPS::MATRIX_MUL(INOUTS[i],1,num_of_nodes_per_layer,WEIGHTS[i],num_of_nodes_per_layer,num_of_nodes_per_layer,INOUTS[i+1]);
+                MATRIX_OPS::MATRIX_SIGMOID_TRANSFORM(INOUTS[i+1],1,num_of_nodes_per_layer,k);
+            }
+
+            for(int i=0; i<num_of_nodes_per_layer; i++)
+            {
+                ep+=pow(expected[i]-INOUTS[num_of_layers][0][i],2);
+            }
+
         }
         ep/=2;
         std::cout<<"Ep = "<<ep<<"\n\n\n\n";
@@ -141,7 +171,7 @@ int main()
             {
                 //these segment is for retrieving prev layers weights before update
                 //MATRIX_OPS::MATRIX_Transpose(delw,num_of_nodes_per_layer,num_of_nodes_per_layer);
-               // MATRIX_OPS::MATRIX_SUB(WEIGHTS[i+1],num_of_nodes_per_layer,num_of_nodes_per_layer,delw,num_of_nodes_per_layer,num_of_nodes_per_layer,delw);
+                // MATRIX_OPS::MATRIX_SUB(WEIGHTS[i+1],num_of_nodes_per_layer,num_of_nodes_per_layer,delw,num_of_nodes_per_layer,num_of_nodes_per_layer,delw);
                 //retrieved //weight is transfered to delw. it's same as weights[i+1]//dont get confused seeing delw below.
                 MATRIX_OPS::MATRIX_MUL(WEIGHTS[i+1],num_of_nodes_per_layer,num_of_nodes_per_layer,sigmas[i+1],num_of_nodes_per_layer,1,sigmas[i]);//sum of sigK*Wjk
                 for(int j=0; j<num_of_nodes_per_layer; j++)
