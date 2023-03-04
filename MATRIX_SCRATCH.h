@@ -1,4 +1,4 @@
-
+#include<math.h>
 namespace MATRIX_OPS
 {
    void MATRIX_MUL(float** MAT_A,int num_of_row_A,int num_of_col_A,float** MAT_B,int num_of_row_B,int num_of_col_B,float** result)
@@ -61,5 +61,20 @@ for(int i=0; i<num_of_row_A; i++)
     for(int i = 0; i < num_of_row_A; ++i)
         for(int j = 0; j < num_of_col_A; ++j)
             result[i][j]=MAT_A[i][j]-MAT_B[i][j];
+}
+
+
+
+
+//for neural network special
+void MATRIX_SIGMOID_TRANSFORM(float **MAT_A,int num_of_row_A,int num_of_col_A,int k)
+{
+for(int i=0; i<num_of_row_A; i++)
+    {
+        for(int j=0; j<num_of_col_A; j++)
+        {
+            MAT_A[i][j]=1.0/(1+pow(2.718,-1*k*MAT_A[i][j]));
+        }
+    }
 }
 }

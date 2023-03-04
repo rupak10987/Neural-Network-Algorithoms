@@ -185,9 +185,9 @@ int main()
                     network[i][j].sigma=big_K*network[i][j].out*(1-network[i][j].out)*sum_of_sigmaK_wjk;
                     for(int k=0; k<Num_Of_nodes_per_layer; k++)
                     {
-                        network[i][j].inputs[i].weight_before_update=network[i][j].inputs[i].weight;
-                        network[i][j].inputs[i].weight=network[i][j].inputs[i].weight + miu*network[i][j].sigma*network[i][j].out;
-                        std::cout<<"adjusted weight of line "<<network[i][j].inputs[i].from<<" - "<<network[i][j].inputs[i].to<<" is "<<network[i][j].inputs[i].weight<<std::endl;
+                        network[i][k].inputs[i].weight_before_update=network[i][k].inputs[i].weight;
+                        network[i][k].inputs[i].weight=network[i][k].inputs[i].weight + miu*network[i][j].sigma*network[i][k].out;
+                        std::cout<<"adjusted weight of line "<<network[i][k].inputs[i].from<<" - "<<network[i][k].inputs[i].to<<" is "<<network[i][k].inputs[i].weight<<std::endl;
                     }
                 }
             }
