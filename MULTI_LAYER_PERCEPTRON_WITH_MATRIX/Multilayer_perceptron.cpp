@@ -122,8 +122,13 @@ int main()
             ep+=pow(expected[i]-INOUTS[num_of_layers][0][i],2);
         }
         ep/=2;
+        //output show
+        for(int ou=0; ou<num_of_nodes_per_layer; ou++)
+        {
+            std::cout<<"out"<<ou<<" : "<<INOUTS[num_of_layers][0][ou]<<"\n";
+        }
         std::cout<<"Ep = "<<ep<<"\n\n\n\n";
-        if(ep<=0.1)
+        if(ep<=0.001)
             break;
 
 //backward_propagation//adjusting weights
@@ -141,7 +146,7 @@ int main()
             {
                 //these segment is for retrieving prev layers weights before update
                 //MATRIX_OPS::MATRIX_Transpose(delw,num_of_nodes_per_layer,num_of_nodes_per_layer);
-               // MATRIX_OPS::MATRIX_SUB(WEIGHTS[i+1],num_of_nodes_per_layer,num_of_nodes_per_layer,delw,num_of_nodes_per_layer,num_of_nodes_per_layer,delw);
+                // MATRIX_OPS::MATRIX_SUB(WEIGHTS[i+1],num_of_nodes_per_layer,num_of_nodes_per_layer,delw,num_of_nodes_per_layer,num_of_nodes_per_layer,delw);
                 //retrieved //weight is transfered to delw. it's same as weights[i+1]//dont get confused seeing delw below.
                 MATRIX_OPS::MATRIX_MUL(WEIGHTS[i+1],num_of_nodes_per_layer,num_of_nodes_per_layer,sigmas[i+1],num_of_nodes_per_layer,1,sigmas[i]);//sum of sigK*Wjk
                 for(int j=0; j<num_of_nodes_per_layer; j++)
@@ -175,12 +180,7 @@ int main()
         }
         MAX_ITER--;
     }
-
-//output
     std::cout<<"\n total iterations "<<1001-MAX_ITER<<"\n";
-    for(int i=0; i<num_of_nodes_per_layer; i++)
-    {
-        std::cout<<"out"<<i<<" : "<<INOUTS[num_of_layers][0][i]<<"\n";
-    }
+
     return 0;
 }

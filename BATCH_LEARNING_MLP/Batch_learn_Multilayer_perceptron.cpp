@@ -133,10 +133,13 @@ int main()
         //initialize inputs from batch matrix
         for(int ba=0; ba<num_of_batch; ba++)
         {
+            std::cout<<"FORWARD PASS FOR BATCH INPUTS : ";
             for(int bi=0; bi<num_of_nodes_per_layer; bi++)
             {
                 INOUTS[0][0][bi]=batch_inputs[ba][bi];
+                std::cout<<batch_inputs[ba][bi]<<", ";
             }
+            std::cout<<std::endl;
             for(int i=0; i<num_of_layers; i++)
             {
 //referecncing the function for teacher's favour:=
@@ -149,11 +152,17 @@ int main()
             {
                 ep+=pow(expected[i]-INOUTS[num_of_layers][0][i],2);
             }
+            //output
+
+            for(int i=0; i<num_of_nodes_per_layer; i++)
+            {
+            std::cout<<"out"<<i<<" : "<<INOUTS[num_of_layers][0][i]<<"\n";
+            }
 
         }
         ep/=2;
         std::cout<<"Ep = "<<ep<<"\n\n\n\n";
-        if(ep<=0.1)
+        if(ep<=0.001)
             break;
 
 //backward_propagation//adjusting weights
@@ -206,11 +215,6 @@ int main()
         MAX_ITER--;
     }
 
-//output
     std::cout<<"\n total iterations "<<1001-MAX_ITER<<"\n";
-    for(int i=0; i<num_of_nodes_per_layer; i++)
-    {
-        std::cout<<"out"<<i<<" : "<<INOUTS[num_of_layers][0][i]<<"\n";
-    }
     return 0;
 }
