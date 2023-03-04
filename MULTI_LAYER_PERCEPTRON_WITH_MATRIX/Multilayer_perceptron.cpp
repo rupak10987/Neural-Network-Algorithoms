@@ -123,11 +123,11 @@ int main()
         ep/=2;
         std::cout<<"Ep = "<<ep<<"\n\n\n\n";
         if(ep<=0.1)
-        break;
+            break;
 //backward_propagation//adjusting weights
         for(int i=num_of_layers-1; i>=0; i--)
         {
-            float miu=0.9;
+            float miu=0.2;
 
             //STEP1 :calculate sigma for out layer and hidden layers
             if(i==num_of_layers-1)//sigma outlayer
@@ -153,14 +153,15 @@ int main()
 
             //visualize updated weigts to console
             std::cout<<"updated weight matric of L"<<i<<"-L"<<i+1<<" :\n";
-            for(int j=0;j<num_of_nodes_per_layer;j++)
+            for(int j=0; j<num_of_nodes_per_layer; j++)
             {
-                for(int l=0;l<num_of_nodes_per_layer;l++)
+                for(int l=0; l<num_of_nodes_per_layer; l++)
                 {
                     std::cout<<WEIGHTS[i][j][l]<<" ";
                 }
                 std::cout<<std::endl;
-            } std::cout<<std::endl;
+            }
+            std::cout<<std::endl;
         }
         MAX_ITER--;
     }

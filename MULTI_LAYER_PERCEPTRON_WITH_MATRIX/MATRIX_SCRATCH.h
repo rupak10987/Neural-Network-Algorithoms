@@ -32,13 +32,6 @@ void MATRIX_ADD(float** MAT_A,int num_of_row_A,int num_of_col_A,float** MAT_B,in
         std::cout<<"addition operation not possible between mat sizes "<<num_of_row_A<<"X"<<num_of_col_A<<" and "<<num_of_row_B<<"X"<<num_of_col_B<<std::endl;
         return;
     }
-for(int i=0; i<num_of_row_A; i++)
-    {
-        for(int j=0; j<num_of_col_B; j++)
-        {
-            result[i][j]=0;
-        }
-    }
     for(int i = 0; i < num_of_row_A; ++i)
         for(int j = 0; j < num_of_col_A; ++j)
             result[i][j]=MAT_A[i][j]+MAT_B[i][j];
@@ -50,13 +43,6 @@ void MATRIX_SUB(float** MAT_A,int num_of_row_A,int num_of_col_A,float** MAT_B,in
     {
         std::cout<<"addition operation not possible between mat sizes "<<num_of_row_A<<"X"<<num_of_col_A<<" and "<<num_of_row_B<<"X"<<num_of_col_B<<std::endl;
         return;
-    }
-for(int i=0; i<num_of_row_A; i++)
-    {
-        for(int j=0; j<num_of_col_B; j++)
-        {
-            result[i][j]=0;
-        }
     }
     for(int i = 0; i < num_of_row_A; ++i)
         for(int j = 0; j < num_of_col_A; ++j)
