@@ -97,11 +97,11 @@ int main()
         }
     }
 //learn
-    int MAX_ITER=100;
+    int MAX_ITER=1000;
     while(MAX_ITER>=0)
     {
 
-        float k=20;
+        float k=5;
         float **delw;
         delw=new float*[num_of_nodes_per_layer];
         for(int j=0; j<num_of_nodes_per_layer; j++)
@@ -120,13 +120,14 @@ int main()
         {
             ep+=pow(expected[i]-INOUTS[num_of_layers][0][i],2);
         }
+        ep/=2;
         std::cout<<"Ep = "<<ep<<"\n\n\n\n";
-        if(ep<0.1)
-            break;
+        if(ep<=0.1)
+        break;
 //backward_propagation//adjusting weights
         for(int i=num_of_layers-1; i>=0; i--)
         {
-            float miu=0.1;
+            float miu=0.9;
 
             //STEP1 :calculate sigma for out layer and hidden layers
             if(i==num_of_layers-1)//sigma outlayer
@@ -164,6 +165,7 @@ int main()
         MAX_ITER--;
     }
 //output
+    std::cout<<"\n total iterations "<<1001-MAX_ITER<<"\n";
     for(int i=0; i<num_of_nodes_per_layer; i++)
     {
         std::cout<<"out"<<i<<" : "<<INOUTS[num_of_nodes_per_layer][0][i]<<"\n";
