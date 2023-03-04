@@ -98,7 +98,7 @@ int main()
     }
 
 //learn
-    int MAX_ITER=1000;
+    int MAX_ITER=5000;
     while(MAX_ITER>=0)
     {
 
@@ -145,10 +145,10 @@ int main()
             else//sigma calculation hidden layers
             {
                 //these segment is for retrieving prev layers weights before update
-                //MATRIX_OPS::MATRIX_Transpose(delw,num_of_nodes_per_layer,num_of_nodes_per_layer);
-                // MATRIX_OPS::MATRIX_SUB(WEIGHTS[i+1],num_of_nodes_per_layer,num_of_nodes_per_layer,delw,num_of_nodes_per_layer,num_of_nodes_per_layer,delw);
-                //retrieved //weight is transfered to delw. it's same as weights[i+1]//dont get confused seeing delw below.
-                MATRIX_OPS::MATRIX_MUL(WEIGHTS[i+1],num_of_nodes_per_layer,num_of_nodes_per_layer,sigmas[i+1],num_of_nodes_per_layer,1,sigmas[i]);//sum of sigK*Wjk
+                MATRIX_OPS::MATRIX_Transpose(delw,num_of_nodes_per_layer,num_of_nodes_per_layer);
+                MATRIX_OPS::MATRIX_SUB(WEIGHTS[i+1],num_of_nodes_per_layer,num_of_nodes_per_layer,delw,num_of_nodes_per_layer,num_of_nodes_per_layer,delw);
+                //retrieved weight is transfered to delw. it's same as prev weights[i+1] dont get confused seeing delw below.
+                MATRIX_OPS::MATRIX_MUL(delw,num_of_nodes_per_layer,num_of_nodes_per_layer,sigmas[i+1],num_of_nodes_per_layer,1,sigmas[i]);//sum of sigK*Wjk
                 for(int j=0; j<num_of_nodes_per_layer; j++)
                     sigmas[i][j][0]=k*INOUTS[i+1][0][j]*(1-INOUTS[i+1][0][j])*sigmas[i][j][0];
             }
@@ -180,7 +180,6 @@ int main()
         }
         MAX_ITER--;
     }
-    std::cout<<"\n total iterations "<<1001-MAX_ITER<<"\n";
-
+    std::cout<<"\n total iterations "<<5000-MAX_ITER<<"\n";
     return 0;
 }
