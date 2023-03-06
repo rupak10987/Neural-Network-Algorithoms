@@ -170,7 +170,7 @@ int main()
             delw=new float*[num_of_nodes_per_layer[i+1]];
             for(int j=0; j<num_of_nodes_per_layer[i+1]; j++)
                 delw[j]=new float[num_of_nodes_per_layer[i]];
-            MATRIX_OPS::MATRIX_MUL(sigmas[i],num_of_nodes_per_layer[i+1],1,INOUTS[i+1],1,num_of_nodes_per_layer[i+1],delw);
+            MATRIX_OPS::MATRIX_MUL(sigmas[i],num_of_nodes_per_layer[i+1],1,INOUTS[i],1,num_of_nodes_per_layer[i],delw);///////
 
             MATRIX_OPS::MATRIX_Constant_Multiply(delw,num_of_nodes_per_layer[i+1],num_of_nodes_per_layer[i],miu);
 
