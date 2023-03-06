@@ -157,7 +157,7 @@ int main()
             MATRIX_OPS::MATRIX_Transpose(WEIGHTS[i],num_of_nodes_per_layer,num_of_nodes_per_layer);
 
             //STEP3: find delW=miu*sig*op
-            MATRIX_OPS::MATRIX_MUL(sigmas[i],num_of_nodes_per_layer,1,INOUTS[i+1],1,num_of_nodes_per_layer,delw);
+            MATRIX_OPS::MATRIX_MUL(sigmas[i],num_of_nodes_per_layer,1,INOUTS[i],1,num_of_nodes_per_layer,delw);//////////////////////////////////////////
             MATRIX_OPS::MATRIX_Constant_Multiply(delw,num_of_nodes_per_layer,num_of_nodes_per_layer,miu);
 
             //STEP4:weights(t+1)=weights(t)+delw
