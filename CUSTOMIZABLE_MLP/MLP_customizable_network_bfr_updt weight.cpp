@@ -6,7 +6,8 @@ int main()
 {
     srand(time(0));
     int num_of_layers;
-    int *num_of_nodes_per_layer;//each layer will have diff num of nodes but fully connected with nodes of other neighboring layers
+    //each layer will have diff num of nodes but fully connected with nodes of other neighboring layers
+    int *num_of_nodes_per_layer;
     std::cout<<"NUMBER OF ACTIVE LAYERS :";
     std::cin>>num_of_layers;
     num_of_nodes_per_layer=new int[num_of_layers+1];
@@ -15,6 +16,7 @@ int main()
         std::cout<<"NUMBER OF NODES IN LAYER"<<i<<" :";
         std::cin>>num_of_nodes_per_layer[i];
     }
+
     //initializing in/out and weight matrices
     float ***INOUTS;
     float ***WEIGHTS;
@@ -105,14 +107,19 @@ int main()
     int MAX_ITER=5000;
     while(MAX_ITER>=0)
     {
-        float k=5;
+        std::cout<<"\nIteration = "<<5000-MAX_ITER<<std::endl;
+        float k=10;
 //forwardpass
         for(int i=0; i<num_of_layers; i++)
         {
 //referecncing the function for teacher's favour:=
-//void MATRIX_MUL(float** MAT_A,int num_of_row_A,int num_of_col_A,float** MAT_B,int num_of_row_B,int num_of_col_B,float** result)
-            MATRIX_OPS::MATRIX_MUL(INOUTS[i],1,num_of_nodes_per_layer[i],WEIGHTS[i],num_of_nodes_per_layer[i],num_of_nodes_per_layer[i+1],INOUTS[i+1]);
-            MATRIX_OPS::MATRIX_SIGMOID_TRANSFORM(INOUTS[i+1],1,num_of_nodes_per_layer[i+1],k);
+//void MATRIX_MUL(float** MAT_A,int num_of_row_A,int num_of_col_A,float** MAT_B
+                  //,int num_of_row_B,int num_of_col_B,float** result)
+        MATRIX_OPS::MATRIX_MUL(INOUTS[i],1
+                               ,num_of_nodes_per_layer[i]
+                               ,WEIGHTS[i],num_of_nodes_per_layer[i]
+                               ,num_of_nodes_per_layer[i+1],INOUTS[i+1]);
+        MATRIX_OPS::MATRIX_SIGMOID_TRANSFORM(INOUTS[i+1],1,num_of_nodes_per_layer[i+1],k);
         }
         float ep=0;
         for(int i=0; i<num_of_nodes_per_layer[num_of_layers]; i++)
@@ -120,12 +127,13 @@ int main()
             ep+=pow(expected[i]-INOUTS[num_of_layers][0][i],2);
         }
         ep/=2;
+
         //output show
         for(int ou=0; ou<num_of_nodes_per_layer[num_of_layers]; ou++)
         {
             std::cout<<"out"<<ou<<" : "<<INOUTS[num_of_layers][0][ou]<<"\n";
         }
-        std::cout<<"Ep = "<<ep<<"\n\n\n\n";
+        std::cout<<"Ep = "<<ep<<"\n";
         if(ep<=0.001)
             break;
 
@@ -133,7 +141,7 @@ int main()
         float** T_saved_delw;
         for(int i=num_of_layers-1; i>=0; i--)
         {
-            float miu=0.2;
+            float miu=0.9;
 
             //STEP1 :calculate sigma for out layer and hidden layers
             if(i==num_of_layers-1)//sigma calculation outlayer
@@ -141,20 +149,24 @@ int main()
 
                 for(int j=0; j<num_of_nodes_per_layer[num_of_layers]; j++)
                 {
-                    sigmas[i][j][0]=k*INOUTS[i+1][0][j]*(1-INOUTS[i+1][0][j])*(expected[j]-INOUTS[i+1][0][j]);
+                sigmas[i][j][0]=k*INOUTS[i+1][0][j]*(1-INOUTS[i+1][0][j])*(expected[j]-INOUTS[i+1][0][j]);
                 }
 
             }
             else//sigma calculation hidden layers
             {
 
-                //these segment is for retrieving prev layers weights before update
-                 //MATRIX_OPS::MATRIX_Transpose(delw,num_of_nodes_per_layer,num_of_nodes_per_layer);
-                MATRIX_OPS::MATRIX_SUB(WEIGHTS[i+1],num_of_nodes_per_layer[i+1],num_of_nodes_per_layer[i+2],T_saved_delw,num_of_nodes_per_layer[i+1],num_of_nodes_per_layer[i+2],T_saved_delw);
-                //retrieved weight is transfered to T_saved_delw. it's same as prev weights[i+1] dont get confused seeing delw below.
-
-                MATRIX_OPS::MATRIX_MUL(T_saved_delw,num_of_nodes_per_layer[i+1],num_of_nodes_per_layer[i+2],sigmas[i+1],num_of_nodes_per_layer[i+2],1,sigmas[i]);//sum of sigK*Wjk
-                std::cout<<"\nhello\n";
+            //these segment is for retrieving prev layers weights before update
+            //MATRIX_OPS::MATRIX_Transpose(delw,num_of_nodes_per_layer,num_of_nodes_per_layer);
+                MATRIX_OPS::MATRIX_SUB(WEIGHTS[i+1],num_of_nodes_per_layer[i+1]
+                                       ,num_of_nodes_per_layer[i+2],T_saved_delw
+                                       ,num_of_nodes_per_layer[i+1]
+                                       ,num_of_nodes_per_layer[i+2],T_saved_delw);
+            //retrieved weight is transfered to T_saved_delw.
+            //it's same as prev weights[i+1] dont get confused seeing delw below.
+                MATRIX_OPS::MATRIX_MUL(T_saved_delw,num_of_nodes_per_layer[i+1]
+                                       ,num_of_nodes_per_layer[i+2],sigmas[i+1]
+                                       ,num_of_nodes_per_layer[i+2],1,sigmas[i]);//sum of sigK*Wjk
                 for(int j=0; j<num_of_nodes_per_layer[i+1]; j++)
                     sigmas[i][j][0]=k*INOUTS[i+1][0][j]*(1-INOUTS[i+1][0][j])*sigmas[i][j][0];
             }
@@ -164,7 +176,9 @@ int main()
             TRANSPOSED=new float*[num_of_nodes_per_layer[i+1]];
             for(int r=0; r<num_of_nodes_per_layer[i+1]; r++)
                 TRANSPOSED[r]=new float[num_of_nodes_per_layer[i]];
-            MATRIX_OPS::MATRIX_Transpose(WEIGHTS[i],num_of_nodes_per_layer[i],num_of_nodes_per_layer[i+1],TRANSPOSED);
+            MATRIX_OPS::MATRIX_Transpose(WEIGHTS[i],num_of_nodes_per_layer[i]
+                                         ,num_of_nodes_per_layer[i+1]
+                                         ,TRANSPOSED);
 
             //STEP3: find delW=miu*sig*op
             float **delw;//same dimension as transposed
@@ -178,15 +192,21 @@ int main()
             {
                 T_saved_delw[j]= new float[num_of_nodes_per_layer[i+1]];
             }
-            MATRIX_OPS::MATRIX_MUL(sigmas[i],num_of_nodes_per_layer[i+1],1,INOUTS[i],1,num_of_nodes_per_layer[i],delw);////////////
-            MATRIX_OPS::MATRIX_Transpose(delw,num_of_nodes_per_layer[i+1],num_of_nodes_per_layer[i],T_saved_delw);//saving delw as transposed
-            MATRIX_OPS::MATRIX_Constant_Multiply(delw,num_of_nodes_per_layer[i+1],num_of_nodes_per_layer[i],miu);
+            MATRIX_OPS::MATRIX_MUL(sigmas[i],num_of_nodes_per_layer[i+1],1
+                                   ,INOUTS[i],1,num_of_nodes_per_layer[i],delw);////////////
+            MATRIX_OPS::MATRIX_Transpose(delw,num_of_nodes_per_layer[i+1]
+                                         ,num_of_nodes_per_layer[i]
+                                         ,T_saved_delw);//saving delw as transposed
+            MATRIX_OPS::MATRIX_Constant_Multiply(delw,num_of_nodes_per_layer[i+1]
+                                                 ,num_of_nodes_per_layer[i],miu);
 
             //STEP4:weights(t+1)=T(weights(t))+delw
-            MATRIX_OPS::MATRIX_ADD(TRANSPOSED,num_of_nodes_per_layer[i+1],num_of_nodes_per_layer[i],delw,num_of_nodes_per_layer[i+1],num_of_nodes_per_layer[i],TRANSPOSED);
+            MATRIX_OPS::MATRIX_ADD(TRANSPOSED,num_of_nodes_per_layer[i+1],num_of_nodes_per_layer[i]
+                                   ,delw,num_of_nodes_per_layer[i+1],num_of_nodes_per_layer[i],TRANSPOSED);
 
             //STEP5: retranspose the weight matric
-            MATRIX_OPS::MATRIX_Transpose(TRANSPOSED,num_of_nodes_per_layer[i+1],num_of_nodes_per_layer[i],WEIGHTS[i]);
+            MATRIX_OPS::MATRIX_Transpose(TRANSPOSED,num_of_nodes_per_layer[i+1]
+                                         ,num_of_nodes_per_layer[i],WEIGHTS[i]);
 
             //visualize updated weigts to console
             std::cout<<"updated weight matric of L"<<i<<"-L"<<i+1<<" :\n";
