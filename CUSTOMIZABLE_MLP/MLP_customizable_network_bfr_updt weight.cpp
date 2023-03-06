@@ -178,7 +178,7 @@ int main()
             {
                 T_saved_delw[j]= new float[num_of_nodes_per_layer[i+1]];
             }
-            MATRIX_OPS::MATRIX_MUL(sigmas[i],num_of_nodes_per_layer[i+1],1,INOUTS[i+1],1,num_of_nodes_per_layer[i+1],delw);
+            MATRIX_OPS::MATRIX_MUL(sigmas[i],num_of_nodes_per_layer[i+1],1,INOUTS[i],1,num_of_nodes_per_layer[i],delw);////////////
             MATRIX_OPS::MATRIX_Transpose(delw,num_of_nodes_per_layer[i+1],num_of_nodes_per_layer[i],T_saved_delw);//saving delw as transposed
             MATRIX_OPS::MATRIX_Constant_Multiply(delw,num_of_nodes_per_layer[i+1],num_of_nodes_per_layer[i],miu);
 
