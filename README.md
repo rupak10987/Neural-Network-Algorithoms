@@ -1,3 +1,4 @@
 # Neural-Network-Lab-Works
- This repository consists of codes regarding different neural network algorithom implementation from scratch.
-<img src="screen_shots/final1.png" alt="3d_path_find"></br>
+This repository consists of codes regarding different neural network algorithom implementation from scratch.</br>
+Visual Output Of A Sample Network</br>
+<img src="NEURAL_NET_VISUALIZATION_MLP/Capture.PNG" alt="Network_visualization"></br>
