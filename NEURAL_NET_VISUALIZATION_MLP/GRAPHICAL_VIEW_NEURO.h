@@ -1,3 +1,4 @@
+#include<stdio.h>
 namespace NEURAL_GRAPHIC
 {
   class Vec3
@@ -88,8 +89,12 @@ void draw_filled_circle(int a,int b,int r,class Col col,float sigma)
 }
 void view_node(float **Net,int layer_no,int node_num)
 {
-    float max_=-1000;
- for(int i=0; i<node_num; i++)
+    //int number=10;
+    //std::string s = std::to_string(number);
+    //char const *pchar = s.c_str();
+
+float max_=-1000;
+for(int i=0; i<node_num; i++)
     {
         if(max_<Net[0][i])
             max_=Net[0][i];
@@ -98,7 +103,12 @@ void view_node(float **Net,int layer_no,int node_num)
     {
         float sig=Net[0][i]/max_;
         class Col c(255,255,255);
-        draw_filled_circle((layer_no+1)*100,(i+1)*100,20,c,sig);///////////
+        draw_filled_circle((layer_no+1)*200,(i+1)*100,20,c,sig);///////////
+
+    float number=Net[0][i];
+    char ch[10];
+    sprintf(ch,"%f",number);
+    outtextxy((layer_no+1)*200-20,(i+1)*100+20,ch);
     }
 
 }
@@ -109,13 +119,21 @@ void view_network(int layer,float **weights,int num_of_row,int num_of_collumn)
     {
         for(int j=0; j<num_of_row; j++)
         {
-            class Vec3 p((layer+1)*100,(j+1)*100,0);
-            class Vec3 q((layer+2)*100,(i+1)*100,0);
+            class Vec3 p((layer+1)*200,(j+1)*100,0);
+            class Vec3 q((layer+2)*200,(i+1)*100,0);
+            float sigma=weights[j][i];
             int r=255*1;
             int g=255*1;
             int b=255*1;
             class Col c(r,g,b);
             draw_line(q,p,c);
+            float offsetx=(p.x+q.x)/2;
+            float offsety=(p.y+q.y)/2;
+            offsety+=10*(i-j);
+            offsetx+=10*(j-i);
+            char ch[10];
+            sprintf(ch,"%0.3f",sigma);
+            outtextxy(offsetx,offsety,ch);
         }
     }
 }

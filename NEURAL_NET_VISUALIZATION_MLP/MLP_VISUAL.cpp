@@ -8,8 +8,8 @@
 int main()
 {
     srand(time(0));
-    int gd = DETECT, gm;//for visualization
-    initgraph(&gd, &gm, "");//for visualization
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, "C:\\TC\\BGI");
     initwindow(1000, 1000);
     int num_of_layers;
     //each layer will have diff num of nodes but fully connected with nodes of other neighboring layers
@@ -239,8 +239,9 @@ int main()
         }
         MAX_ITER--;
     }
+
+    std::cout<<"\n total iterations "<<5000-MAX_ITER<<"\n";
     getch();
     closegraph();
-    std::cout<<"\n total iterations "<<5000-MAX_ITER<<"\n";
     return 0;
 }
