@@ -10,7 +10,7 @@ int main()
     srand(time(0));
     int gd = DETECT, gm;
     initgraph(&gd, &gm, "C:\\TC\\BGI");
-    initwindow(1000, 1000);
+    initwindow(1000, 500);
     int num_of_layers;
     //each layer will have diff num of nodes but fully connected with nodes of other neighboring layers
     int *num_of_nodes_per_layer;
@@ -137,6 +137,13 @@ int main()
 
         }
         NEURAL_GRAPHIC::view_node(INOUTS[num_of_layers],num_of_layers,num_of_nodes_per_layer[num_of_layers]);
+        for(int ex=0;ex<num_of_nodes_per_layer[num_of_layers];ex++)
+        {
+        char ch[100];
+        sprintf(ch,"EXPECTED OUTPUT %0.3f",expected[ex]);
+        outtextxy(800,20*(ex+1),ch);
+        }
+        //
         float ep=0;
         for(int i=0; i<num_of_nodes_per_layer[num_of_layers]; i++)
         {
@@ -150,14 +157,17 @@ int main()
             std::cout<<"out"<<ou<<" : "<<INOUTS[num_of_layers][0][ou]<<"\n";
         }
        std::cout<<"Ep = "<<ep<<"\n";
-        if(ep<=0.001)
+       char ch[100];
+        sprintf(ch,"EP = %f",ep);
+        outtextxy(800,20*(num_of_nodes_per_layer[num_of_layers]+1),ch);
+        if(ep<=0.005)
             break;
 
 //backward_propagation//adjusting weights
         float** T_saved_delw;
         for(int i=num_of_layers-1; i>=0; i--)
         {
-            float miu=0.2;
+            float miu=0.9;
 
             //STEP1 :calculate sigma for out layer and hidden layers
             if(i==num_of_layers-1)//sigma calculation outlayer
