@@ -45,7 +45,7 @@ void draw_line(class Vec3 P,class Vec3 P1,class Col col)
             for(int i=P.x; i<=P1.x; i++)
             {
                 yn+=m;
-                putpixel(i,m,COLOR(col.r,col.g,col.b));
+                putpixel(i,yn,COLOR(col.r,col.g,col.b));
             }
         }
     }
@@ -72,14 +72,15 @@ void draw_filled_circle(int a,int b,int r,class Col col,float sigma)
     float x1=0;
     float x2=0;
     float y=b-r;
+    circle(a,b,r);
     while(y<=b+r)
     {
         float c=pow(r,2)-pow(a,2)-pow(y,2)+2*b*y-pow(b,2);
         c=-c;
         x1=(2*a+pow((4*pow(a,2))-4*c,0.5))/2.0;
         x2=(2*a-pow((4*pow(a,2))-4*c,0.5))/2.0;
-        class Vec3 p(y,x1,0);
-        class Vec3 q(y,x2,0);
+        class Vec3 p(x1,y,0);
+        class Vec3 q(x2,y,0);
         draw_line(p,q,col);
         y+=10*(1.1-sigma);
     }
@@ -87,13 +88,17 @@ void draw_filled_circle(int a,int b,int r,class Col col,float sigma)
 }
 void view_node(float **Net,int layer_no,int node_num)
 {
-
+    float max_=-1000;
+ for(int i=0; i<node_num; i++)
+    {
+        if(max_<Net[0][i])
+            max_=Net[0][i];
+    }
     for(int i=0; i<node_num; i++)
     {
-
-        float sig=Net[0][i]/1.0;
+        float sig=Net[0][i]/max_;
         class Col c(255,255,255);
-        draw_filled_circle((i+1)*100,(layer_no+1)*100,20,c,sig);///////////
+        draw_filled_circle((layer_no+1)*100,(i+1)*100,20,c,sig);///////////
     }
 
 }
@@ -106,12 +111,11 @@ void view_network(int layer,float **weights,int num_of_row,int num_of_collumn)
         {
             class Vec3 p((layer+1)*100,(j+1)*100,0);
             class Vec3 q((layer+2)*100,(i+1)*100,0);
-            float sigma=(10+weights[j][i])/20.00;//max_weight-10to10
-            int r=255*sigma;
-            int g=255*sigma;
-            int b=255*sigma;
+            int r=255*1;
+            int g=255*1;
+            int b=255*1;
             class Col c(r,g,b);
-            draw_line(p,q,c);
+            draw_line(q,p,c);
         }
     }
 }
