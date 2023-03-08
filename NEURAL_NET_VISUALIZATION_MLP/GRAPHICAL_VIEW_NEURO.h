@@ -73,7 +73,6 @@ void draw_filled_circle(int a,int b,int r,class Col col,float sigma)
     float x1=0;
     float x2=0;
     float y=b-r;
-    circle(a,b,r);
     while(y<=b+r)
     {
         float c=pow(r,2)-pow(a,2)-pow(y,2)+2*b*y-pow(b,2);
@@ -82,9 +81,13 @@ void draw_filled_circle(int a,int b,int r,class Col col,float sigma)
         x2=(2*a-pow((4*pow(a,2))-4*c,0.5))/2.0;
         class Vec3 p(x1,y,0);
         class Vec3 q(x2,y,0);
+        col.r*=(sigma);
+        col.g*=(sigma);
+        col.b*=(sigma);
         draw_line(p,q,col);
-        y+=10*(1.1-sigma);
+        y+=1;//10*(1.1-sigma);
     }
+    circle(a,b,r);
 
 }
 void view_node(float **Net,int layer_no,int node_num)
@@ -101,7 +104,7 @@ for(int i=0; i<node_num; i++)
     }
     for(int i=0; i<node_num; i++)
     {
-        float sig=Net[0][i]/max_;
+        float sig=(Net[0][i])/max_;
         class Col c(255,255,255);
         draw_filled_circle((layer_no+1)*200,(i+1)*100,20,c,sig);///////////
 
