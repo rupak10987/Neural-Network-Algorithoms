@@ -249,8 +249,39 @@ int main()
         }
         MAX_ITER--;
     }
-
     std::cout<<"\n total iterations "<<5000-MAX_ITER<<"\n";
+
+    //Trial and error.........
+    while(true)
+    {
+        for(int i=0;i<num_of_nodes_per_layer[0];i++)
+        {
+            std::cout<<"Input"<<i<<" : ";
+            std::cin>>INOUTS[0][0][i];
+        }
+        for(int i=0; i<num_of_layers; i++)
+        {
+        MATRIX_OPS::MATRIX_MUL(INOUTS[i],1,num_of_nodes_per_layer[i],WEIGHTS[i],num_of_nodes_per_layer[i],num_of_nodes_per_layer[i+1],INOUTS[i+1]);
+        MATRIX_OPS::MATRIX_SIGMOID_TRANSFORM(INOUTS[i+1],1,num_of_nodes_per_layer[i+1],5);//k=5
+        NEURAL_GRAPHIC::view_node(INOUTS[i],i,num_of_nodes_per_layer[i]);
+        NEURAL_GRAPHIC::view_network(i,WEIGHTS[i],num_of_nodes_per_layer[i],num_of_nodes_per_layer[i+1]);
+        }
+        NEURAL_GRAPHIC::view_node(INOUTS[num_of_layers],num_of_layers,num_of_nodes_per_layer[num_of_layers]);
+        float ep=0;
+        for(int i=0; i<num_of_nodes_per_layer[num_of_layers]; i++)
+        {
+            ep+=pow(expected[i]-INOUTS[num_of_layers][0][i],2);
+        }
+        ep/=2;
+        char ch[100];
+        sprintf(ch,"EP = %f",ep);
+        outtextxy(800,20*(num_of_nodes_per_layer[num_of_layers]+1),ch);
+        char c;
+        std::cout<<"Exit?Y/N : ";
+        std::cin>>c;
+        if(c=='Y')
+        break;
+    }
     getch();
     closegraph();
     return 0;
