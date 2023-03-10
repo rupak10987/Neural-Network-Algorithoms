@@ -115,7 +115,7 @@ int main()
     {
      std::cout<<"\nIteration = "<<5000-MAX_ITER<<std::endl;
         float k=5;
-        delay(500);
+        //delay(500);
         cleardevice();
 //forwardpass
         for(int i=0; i<num_of_layers; i++)
@@ -161,7 +161,11 @@ int main()
         sprintf(ch,"EP = %f",ep);
         outtextxy(800,20*(num_of_nodes_per_layer[num_of_layers]+1),ch);
         if(ep<=0.005)
+        {
+            swapbuffers();
             break;
+        }
+
 
 //backward_propagation//adjusting weights
         float** T_saved_delw;
@@ -247,6 +251,7 @@ int main()
             }
             std::cout<<std::endl;
         }
+        swapbuffers();
         MAX_ITER--;
     }
     std::cout<<"\n total iterations "<<5000-MAX_ITER<<"\n";
@@ -254,6 +259,7 @@ int main()
     //Trial and error.........
     while(true)
     {
+        std::cout<<"trial "<<std::endl;
         for(int i=0;i<num_of_nodes_per_layer[0];i++)
         {
             std::cout<<"Input"<<i<<" : ";
@@ -273,9 +279,10 @@ int main()
             ep+=pow(expected[i]-INOUTS[num_of_layers][0][i],2);
         }
         ep/=2;
-        char ch[100];
-        sprintf(ch,"EP = %f",ep);
-        outtextxy(800,20*(num_of_nodes_per_layer[num_of_layers]+1),ch);
+        char chr[100];
+        sprintf(chr,"EP = %f",ep);
+        outtextxy(800,20*(num_of_nodes_per_layer[num_of_layers]+1),chr);
+        swapbuffers();
         char c;
         std::cout<<"Exit?Y/N : ";
         std::cin>>c;
