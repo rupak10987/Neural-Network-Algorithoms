@@ -94,47 +94,4 @@ for(int i=0; i<num_of_row_A; i++)
         }
     }
 }
-
-//radial basis special
-void DISTANCE_SQUARED_CALCULATION(float** MAT_A
-                   ,int num_of_row_A
-                   ,int num_of_col_A
-                   ,float** MAT_B
-                   ,int num_of_row_B
-                   ,int num_of_col_B
-                   ,float** result)
-{
-    if(num_of_col_A!=num_of_row_B)
-    {
-        return;
-    }
-
-    //initialize result to 0;
-    for(int i=0; i<num_of_row_A; i++)
-    {
-        for(int j=0; j<num_of_col_B; j++)
-        {
-            result[i][j]=0;
-        }
-    }
-    //multiplication
-    for(int i = 0; i < num_of_row_A; ++i)
-        for(int j = 0; j < num_of_col_B; ++j)
-            for(int k = 0; k < num_of_col_A; ++k)
-            {
-                result[i][j] += pow(MAT_A[i][k] - MAT_B[k][j],2);
-            }
-}
-
-void MATRIX_GAUSIAN_TRANSFORM(float **MAT_A,int num_of_row_A,int num_of_col_A)
-{
-for(int i=0; i<num_of_row_A; i++)
-    {
-        for(int j=0; j<num_of_col_A; j++)
-        {
-            MAT_A[i][j]=(pow(2.718,-1*MAT_A[i][j]));
-        }
-    }
-}
-
 }
