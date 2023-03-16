@@ -5,11 +5,14 @@
 #include"MATRIX_SCRATCH.h"
 #include"GRAPHICAL_VIEW_NEURO.h"
 #include<math.h>
+void NETWORK_IO(int **board)
+{
+
+}
 int main()
 {
     srand(time(0));
     int gd = DETECT, gm;
-    initgraph(&gd, &gm, "C:\\TC\\BGI");
     initwindow(1000, 1000);
     int num_of_layers=2;
     int *num_of_nodes_per_layer;
@@ -18,7 +21,6 @@ int main()
     {
         num_of_nodes_per_layer[i]=9;
     }
-
     //initializing in/out and weight matrices
     float ***INOUTS;
     float ***WEIGHTS;
@@ -38,10 +40,6 @@ int main()
             WEIGHTS[i][j]=new float[num_of_nodes_per_layer[i+1]];//collumn=next layer nodes
         }
     }
-    //done initializing
-
-    //this section will be controlled by an AI
-    //network i/o
     for(int i=0; i<num_of_layers+1; i++)
     {
         for(int j=0; j<num_of_nodes_per_layer[i]; j++)
