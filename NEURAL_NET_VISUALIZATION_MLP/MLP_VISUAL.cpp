@@ -114,7 +114,7 @@ int main()
     while(MAX_ITER>=0)
     {
      std::cout<<"\nIteration = "<<5000-MAX_ITER<<std::endl;
-        float k=5;
+        float k=2;
         //delay(500);
         cleardevice();
 //forwardpass

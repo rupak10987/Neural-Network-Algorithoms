@@ -85,7 +85,7 @@ int main()
     std::cin>>choice;
     if(choice=='L')
     {
-        while(num_play<=10)
+        while(num_play<=1000)
         {
             std::cout<<"PLAY NO "<<num_play<<"\n";
             initialize_board(board);
@@ -133,7 +133,7 @@ int main()
                     std::cout<<"\nLearning..................................\n";
                     float ep=100;
                     float prev_ep=101;
-                    int max_iter=20;
+                    int max_iter=100;
                     while(max_iter>0)
                     {
                         ep=forward_pass(INOUTS,expected,WEIGHTS,sigmas,num_of_layers,num_of_nodes_per_layer,true);
@@ -198,36 +198,48 @@ int main()
 
         //save weights
         std::ofstream WEIGHT01("WEIGHT01.txt");
-        std::ofstream WEIGHT12("WEIGHT12.txt");
         for(int i=0; i<9; i++)
         {
             for(int j=0; j<9; j++)
             {
                 WEIGHT01<<WEIGHTS[0][i][j];
-                WEIGHT12<<WEIGHTS[1][i][j];
                 WEIGHT01<<" ";
-                WEIGHT12<<" ";
             }
             WEIGHT01<<"\n";
-            WEIGHT12<<"\n";
         }
         WEIGHT01.close();
+        std::ofstream WEIGHT12("WEIGHT12.txt");
+        for(int i=0; i<9; i++)
+        {
+            for(int j=0; j<9; j++)
+            {
+                WEIGHT12<<WEIGHTS[1][i][j];
+                WEIGHT12<<" ";
+            }
+            WEIGHT12<<"\n";
+        }
         WEIGHT12.close();
     }
 
 
-    std::ifstream WEIGHT01("WEIGHT01.txt");
-    std::ifstream WEIGHT12("WEIGHT12.txt");
+    std::ifstream INWEIGHT01("WEIGHT01.txt");
     for(int i = 0; i < 9; i++)
     {
         for(int j = 0; j < 9; j++)
         {
-            WEIGHT01 >> WEIGHTS[0][i][j];
-            WEIGHT12 >> WEIGHTS[1][i][j];
+            INWEIGHT01 >> WEIGHTS[0][i][j];
         }
     }
-    WEIGHT01.close();
-    WEIGHT12.close();
+    INWEIGHT01.close();
+    std::ifstream INWEIGHT12("WEIGHT12.txt");
+    for(int i = 0; i < 9; i++)
+    {
+        for(int j = 0; j < 9; j++)
+        {
+            INWEIGHT12 >> WEIGHTS[1][i][j];
+        }
+    }
+    INWEIGHT12.close();
 
     initialize_board(board);
     //......play
@@ -340,18 +352,18 @@ float forward_pass(float ***INOUTS,float *expected,float ***WEIGHTS,float ***sig
         MATRIX_OPS::MATRIX_SIGMOID_TRANSFORM(INOUTS[i+1],1,num_of_nodes_per_layer[i+1],k);
 
         //visualize to window
-        NEURAL_GRAPHIC::view_node(INOUTS[i],i,num_of_nodes_per_layer[i]);
-        NEURAL_GRAPHIC::view_network(i,WEIGHTS[i]
-                                     ,num_of_nodes_per_layer[i]
-                                     ,num_of_nodes_per_layer[i+1]);
+       // NEURAL_GRAPHIC::view_node(INOUTS[i],i,num_of_nodes_per_layer[i]);
+        //NEURAL_GRAPHIC::view_network(i,WEIGHTS[i]
+                                     //,num_of_nodes_per_layer[i]
+                                     //,num_of_nodes_per_layer[i+1]);
 
     }
-    NEURAL_GRAPHIC::view_node(INOUTS[num_of_layers],num_of_layers,num_of_nodes_per_layer[num_of_layers]);
+    //NEURAL_GRAPHIC::view_node(INOUTS[num_of_layers],num_of_layers,num_of_nodes_per_layer[num_of_layers]);
     for(int ex=0; ex<num_of_nodes_per_layer[num_of_layers]; ex++)
     {
         char ch[100];
         sprintf(ch,"EXPECTED OUTPUT %0.3f",expected[ex]);
-        outtextxy(800,20*(ex+1),ch);
+       // outtextxy(800,20*(ex+1),ch);
     }
     float ep=0;
     for(int i=0; i<num_of_nodes_per_layer[num_of_layers]; i++)
@@ -363,7 +375,7 @@ float forward_pass(float ***INOUTS,float *expected,float ***WEIGHTS,float ***sig
     {
         char ch[100];
         sprintf(ch,"EP = %f",ep);
-        outtextxy(800,20*(num_of_nodes_per_layer[num_of_layers]+1),ch);
+        //outtextxy(800,20*(num_of_nodes_per_layer[num_of_layers]+1),ch);
 
     }
     swapbuffers();
