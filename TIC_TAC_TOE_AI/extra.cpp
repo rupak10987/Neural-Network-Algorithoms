@@ -89,6 +89,8 @@ int main()
         {
             std::cout<<"PLAY NO "<<num_play<<"\n";
             initialize_board(board);
+            previous_moves[0]=0;
+            previous_moves[1]=1;
             int moves=0;
             int mmoves=0;
             while(true)
@@ -115,12 +117,8 @@ int main()
                 if(CHECK_WIN(board)==-1)
                 {
                     std::cout<<"\nHUMAN WON\n";
-                    //make the machine learn
-                    //back track the board two moves with the help of previos_moves
                     board[previous_moves[0]/3][previous_moves[0]%3]=0;
                     board[previous_moves[1]/3][previous_moves[1]%3]=0;
-                    //train the machine with expected output =
-                    //board state and the new move at being where it lost previos[0];
                     for(int i=0; i<9; i++)
                     {
                         INOUTS[0][0][i]=board[i/3][i%3];
@@ -144,8 +142,33 @@ int main()
                         back_pass(INOUTS,expected,WEIGHTS,sigmas,num_of_layers,num_of_nodes_per_layer);
                         max_iter--;
                     }
-                    break;
+                   continue;
                 }
+                else
+                {
+                    for(int i=0;i<9;i++)
+                    {
+                        INOUTS[0][0][i]=board[i/3][i%3];
+                        expected[i]=board[i/3][i%3];
+                    }
+                    INOUTS[0][0][previous_moves[1]]=0;
+                    expected[previous_moves[1]]=1;
+                    std::cout<<"\nstep Learning ..................................\n";
+                    float ep=100;
+                    float prev_ep=101;
+                    int max_iter=100;
+                    while(max_iter>0)
+                    {
+                        ep=forward_pass(INOUTS,expected,WEIGHTS,sigmas,num_of_layers,num_of_nodes_per_layer,true);
+                        std::cout<<"EP="<<ep<<"\n";
+                        if(ep<0.01 || prev_ep<ep)
+                            break;
+                        prev_ep=ep;
+                        back_pass(INOUTS,expected,WEIGHTS,sigmas,num_of_layers,num_of_nodes_per_layer);
+                        max_iter--;
+                    }
+                }
+
                 //machine plays
                 std::cout<<"MACHINE MOVE "<<mmoves<<"\n";
                 mmoves++;
@@ -192,6 +215,7 @@ int main()
                     std::cout<<"\MACHINE WON\n";
                     break;
                 }
+
             }
             num_play++;
         }
@@ -352,18 +376,18 @@ float forward_pass(float ***INOUTS,float *expected,float ***WEIGHTS,float ***sig
         MATRIX_OPS::MATRIX_SIGMOID_TRANSFORM(INOUTS[i+1],1,num_of_nodes_per_layer[i+1],k);
 
         //visualize to window
-       // NEURAL_GRAPHIC::view_node(INOUTS[i],i,num_of_nodes_per_layer[i]);
-        //NEURAL_GRAPHIC::view_network(i,WEIGHTS[i]
-                                     //,num_of_nodes_per_layer[i]
-                                     //,num_of_nodes_per_layer[i+1]);
+       NEURAL_GRAPHIC::view_node(INOUTS[i],i,num_of_nodes_per_layer[i]);
+        NEURAL_GRAPHIC::view_network(i,WEIGHTS[i]
+                                     ,num_of_nodes_per_layer[i]
+                                     ,num_of_nodes_per_layer[i+1]);
 
     }
-    //NEURAL_GRAPHIC::view_node(INOUTS[num_of_layers],num_of_layers,num_of_nodes_per_layer[num_of_layers]);
+    NEURAL_GRAPHIC::view_node(INOUTS[num_of_layers],num_of_layers,num_of_nodes_per_layer[num_of_layers]);
     for(int ex=0; ex<num_of_nodes_per_layer[num_of_layers]; ex++)
     {
         char ch[100];
         sprintf(ch,"EXPECTED OUTPUT %0.3f",expected[ex]);
-       // outtextxy(800,20*(ex+1),ch);
+       outtextxy(800,20*(ex+1),ch);
     }
     float ep=0;
     for(int i=0; i<num_of_nodes_per_layer[num_of_layers]; i++)
@@ -375,7 +399,7 @@ float forward_pass(float ***INOUTS,float *expected,float ***WEIGHTS,float ***sig
     {
         char ch[100];
         sprintf(ch,"EP = %f",ep);
-        //outtextxy(800,20*(num_of_nodes_per_layer[num_of_layers]+1),ch);
+        outtextxy(800,20*(num_of_nodes_per_layer[num_of_layers]+1),ch);
 
     }
     swapbuffers();
