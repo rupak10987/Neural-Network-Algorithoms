@@ -21,32 +21,32 @@ void MATRIX_DISTANCE_CALC(float** MAT_A
 int main()
 {
     int gd = DETECT, gm;
-    initgraph(&gd, &gm, "C:\\TC\\BGI");
-    initwindow(1000, 500);
+    //initgraph(&gd, &gm, "C:\\TC\\BGI");
+    initwindow(500, 500);
     srand(time(0));
 
-
+    int num_of_training_points=300;
     int num_of_layers=2;
     int num_of_nodes_per_layer[2]= {2,10}; //input node 2 and network nodes 10
     //data set
-    POINTSS point[1000];
-    for(int i=0; i<1000; i++)
+    POINTSS point[num_of_training_points];
+    for(int i=0; i<num_of_training_points; i++)
     {
         int choice=rand()%2;//2 clusters for now
         switch(choice)
         {
         case 0:
         {
-            point[i].x1=400+rand()%100;
-            point[i].x2=400+rand()%100;
+            point[i].x1=300+rand()%100;
+            point[i].x2=300+rand()%100;
             putpixel(point[i].x1,point[i].x2,YELLOW);
             break;
         }
 
         case 1:
         {
-            point[i].x1=250+rand()%100;
-            point[i].x2=250+rand()%100;
+            point[i].x1=150+rand()%100;
+            point[i].x2=150+rand()%100;
             putpixel(point[i].x1,point[i].x2,GREEN);
             break;
         }
@@ -72,15 +72,15 @@ int main()
     {
         for(int k=0; k<num_of_nodes_per_layer[0]; k++)
         {
-            WEIGHTS[k][j]=200+rand()%250;//fill vertically
+            WEIGHTS[k][j]=100+rand()%250;//fill vertically
         }
         //putpixel(WEIGHTS[0][j],WEIGHTS[1][j],RED);
     }
 
     //main algo
-    float neighbor_radius=1000;
+    float neighbor_radius=300;
     float miu=0.5;
-    for(int i=0; i<1000; i++) //iterate for every pattern
+    for(int i=0; i<num_of_training_points; i++) //iterate for every pattern
     {
         INS[0][0]=point[i].x1;
         INS[0][1]=point[i].x2;
@@ -110,26 +110,34 @@ int main()
         //update weights of the winner node and nodes that are in neighborhood
         cleardevice();
         //just addingt the training points for visualization
-        for(int k=0; k<1000; k++) //iterate for every pattern
+        for(int k=0; k<num_of_training_points; k++) //iterate for every pattern
         {
             NEURAL_GRAPHIC::Col cir_col(0,255,255);
             NEURAL_GRAPHIC::draw_filled_circle(point[k].x1,point[k].x2,3,cir_col,1);
             //putpixel(point[k].x1,point[k].x2,YELLOW);
 
         }
+        //color the current pattern green
+            NEURAL_GRAPHIC::Col cir_GRE(0,255,0);
+            NEURAL_GRAPHIC::draw_filled_circle(INS[0][0],INS[0][1],3,cir_GRE,1);
         //done adding the points
 
         for(int j=0; j<num_of_nodes_per_layer[1]; j++)
         {
             for(int k=0; k<num_of_nodes_per_layer[0]; k++)
             {
-                if(euclid_dist(WEIGHTS[0][min_d_index]
+                if(j==min_d_index)
+                {
+                  WEIGHTS[k][j]= WEIGHTS[k][j]+miu*(INS[0][k]-WEIGHTS[k][j]);
+                }
+                else if(euclid_dist(WEIGHTS[0][min_d_index]
                                ,WEIGHTS[1][min_d_index]
                                ,WEIGHTS[0][j]
                                ,WEIGHTS[1][j])<=neighbor_radius)
                 {
                     WEIGHTS[k][j]= WEIGHTS[k][j]+miu*(INS[0][k]-WEIGHTS[k][j]);
                 }
+
 
             }
             std::cout<<"updated WEIGHT"<<j<<" ="<<WEIGHTS[0][j]<<","<<WEIGHTS[1][j]<<"\n";
