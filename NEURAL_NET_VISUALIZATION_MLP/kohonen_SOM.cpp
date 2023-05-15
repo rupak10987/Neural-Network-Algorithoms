@@ -110,7 +110,7 @@ int main()
         //update weights of the winner node and nodes that are in neighborhood
         cleardevice();
         //just addingt the training points for visualization
-        for(int k=0; k<100; k++) //iterate for every pattern
+        for(int k=0; k<1000; k++) //iterate for every pattern
         {
             NEURAL_GRAPHIC::Col cir_col(0,255,255);
             NEURAL_GRAPHIC::draw_filled_circle(point[k].x1,point[k].x2,3,cir_col,1);
@@ -140,6 +140,7 @@ int main()
         std::cout<<"\n";
         swapbuffers();
         //delay(10);
+        if(neighbor_radius>=0)
         neighbor_radius-=2;
         miu-=0.001;
     }
