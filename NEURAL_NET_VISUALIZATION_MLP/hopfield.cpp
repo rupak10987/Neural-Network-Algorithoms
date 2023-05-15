@@ -5,6 +5,7 @@
 #include"MATRIX_SCRATCH.h"
 #include"GRAPHICAL_VIEW_NEURO.h"
 #include<math.h>
+void print_matrix(float **A,int r,int c,const char* name);
 int main()
 {
     srand(time(0));
@@ -69,13 +70,15 @@ T_INS=new float*[num_of_nodes];
 for(int j=0;j<num_of_nodes;j++ )
 {
     T_INS[j]=new float[1];
-    T_INS[j][0]=INS[i][0][j];
 }
-
+MATRIX_OPS::MATRIX_Transpose(INS[i],1,num_of_nodes,T_INS);
 //W=INS_t * INS
+print_matrix(T_INS,num_of_nodes,1,"inverse X");
 MATRIX_OPS::MATRIX_MUL(T_INS,num_of_nodes,1,INS[i],1,num_of_nodes,prev_WEIGHT);
+print_matrix(prev_WEIGHT,num_of_nodes,num_of_nodes,"WEIGHT");
 MATRIX_OPS::MATRIX_ADD_SAME(WEIGHT,num_of_nodes,num_of_nodes,prev_WEIGHT,num_of_nodes,num_of_nodes,WEIGHT);
 }
+print_matrix(WEIGHT,num_of_nodes,num_of_nodes,"Total WEIGHT");
 //calculate new miu
 float **new_miu;
 new_miu=new float*[1];
@@ -89,7 +92,9 @@ while(true)
     MATRIX_OPS::MATRIX_SUB_SAME(new_miu,1,num_of_nodes,miu,1,num_of_nodes,miu);
     int check=0;
     for(int k=0;k<num_of_nodes;k++)
-    miu[0][k]+=check;
+    {
+      check+=miu[0][k];
+    }
     if(check==0)
     {
     break;
@@ -99,9 +104,8 @@ while(true)
     for(int k=0;k<num_of_nodes;k++)
     {
         miu[0][k]=new_miu[0][k];
-        std::cout<<miu[0][k]<<" ";
-    }std::cout<<"\n";
-
+    }
+    print_matrix(miu,1,num_of_nodes,"miu(t+1)");
     }
 
 }
@@ -109,4 +113,17 @@ while(true)
     initwindow(500, 500);
     getch();
     closegraph();*/
+}
+
+
+void print_matrix(float **A,int r,int c,const char* name)
+{
+    std::cout<<name<<" : \n";
+    for(int i=0;i<r;i++)
+    {
+        for(int j=0;j<c;j++)
+        {
+            std::cout<<A[i][j]<<" ";
+        }std::cout<<"\n";
+    }
 }
