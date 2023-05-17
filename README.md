@@ -1,4 +1,4 @@
 # Neural-Network-Lab-Works
 This repository consists of codes regarding different neural network algorithom implementation from scratch.</br>
 Visual Output Of A Sample Network</br>
-<img src="NEURAL_NET_VISUALIZATION_MLP/Capture2.PNG" alt="Network_visualization"></br>
+<img src="NEURAL_NET_VISUALIZATION_MLP/sample_network.PNG" alt="Network_visualization"></br>
