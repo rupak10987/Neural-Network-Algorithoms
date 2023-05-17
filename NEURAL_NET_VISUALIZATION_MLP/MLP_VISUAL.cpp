@@ -9,7 +9,6 @@ int main()
 {
     srand(time(0));
     int gd = DETECT, gm;
-    initgraph(&gd, &gm, "C:\\TC\\BGI");
     initwindow(1000, 500);
     int num_of_layers;
     //each layer will have diff num of nodes but fully connected with nodes of other neighboring layers
