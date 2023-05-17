@@ -10,7 +10,7 @@ Back propagation learning algorithm hasbeen used to make the Program learn to cl
 <br />
 
 # Kohonen Self Organising Algorithm
-The Neurons organises themselves to identify clusters in traing Patterns<br />
+The Neurons organises themselves to identify clusters in traing Patterns</br>
 ![Kohonen Self Organising Network](https://github.com/rupak10987/Neural-Network-Lab-Works/blob/64b91d8498f1566452cf05c0360c843a3aa916d4/Kohonen%20Self%20Organising%20Network/ss.PNG)<br />
 
 # Hopfiled Network
