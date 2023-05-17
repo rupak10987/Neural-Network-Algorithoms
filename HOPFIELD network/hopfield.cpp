@@ -6,7 +6,7 @@
 #include"file.h"
 #include<math.h>
 void print_matrix(float **A,int r,int c,const char* name);
-void draw_miu(float**miu,int num_of_nodes);
+void draw_miu(float**miu,int num_of_nodes, int updt_no);
 int main()
 {
     srand(time(0));
@@ -70,7 +70,10 @@ int main()
         {
             read_binary_file_for_hopfield::fetch_ins(INS[i],i,100);
         }
-        read_binary_file_for_hopfield::fetch_miu(miu,100);
+        int miu_img_no;
+        std::cout<<"sample miu image number: ";
+        std::cin>>miu_img_no;
+        read_binary_file_for_hopfield::fetch_miu(miu,miu_img_no,100);
     }
 
 
@@ -139,7 +142,7 @@ int main()
         if(c=='M')//if choice was manual input(cumbersome)
         print_matrix(new_miu,1,num_of_nodes,"threshold miu(t+1)");
         if(c!='M')
-        draw_miu(new_miu,num_of_nodes);
+        draw_miu(new_miu,num_of_nodes,num_of_update);
     //check if new and prev miu are same or not
         MATRIX_OPS::MATRIX_SUB_SAME(new_miu,1,num_of_nodes,miu,1,num_of_nodes,miu);
         //if(c=='M')//if choice was manual input(cumbersome)
@@ -187,19 +190,23 @@ void print_matrix(float **A,int r,int c,const char* name)
     }
 }
 
-void draw_miu(float**miu,int num_of_nodes)
+void draw_miu(float**miu,int num_of_nodes, int updt_no)
 {
+    char chr[100];
+    sprintf(chr,"miu[%d]",updt_no);
+    outtextxy(((updt_no-1)*110)+25,480,chr);
+
     for(int itr=0; itr<num_of_nodes; itr++)
     {
-        int x=(itr)%10;
+        int x=(updt_no-1)*11+(itr)%10;
         int y=(int)(itr/10);
         for(int m=x*10; m<x*10+10; m++)
             for(int n=y*10; n<y*10+10; n++)
             {
                 if(miu[0][itr]==1)
-                    putpixel(m,n+350,YELLOW);
+                    putpixel(m,n+360,YELLOW);
             }
 
     }
-    swapbuffers();
+   // swapbuffers();
 }

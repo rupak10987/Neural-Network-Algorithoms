@@ -49,10 +49,14 @@ void fetch_ins(float **ins,int filenumber,int size_of_image)
 }
 
 
-void fetch_miu(float **ins,int size_of_image)
+void fetch_miu(float **ins,int sample_miu_no,int size_of_image)
 {
-    std::cout<<"miu.txt\n";
-    std::ifstream inputFile("miu.txt");
+    std::string str;
+    str = std::to_string(sample_miu_no);
+    str="miu"+str+".txt";
+    const char*  filename = str.c_str();
+    std::cout<<filename<<std::endl;
+    std::ifstream inputFile(filename);
 
     char chr[100];
     sprintf(chr,"miu[0]");
@@ -76,7 +80,7 @@ void fetch_miu(float **ins,int size_of_image)
                 int y=(int)(itr/10);
                 for(int m=x*10;m<x*10+10;m++)
                 for(int n=y*10;n<y*10+10;n++)
-                putpixel(m,n+150,YELLOW);
+                putpixel(m,n+250,YELLOW);
 
             }
             else
