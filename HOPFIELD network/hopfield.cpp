@@ -15,7 +15,7 @@ int main()
 
     //initializations
     int num_of_pattern_set;
-    std::cout<<"input num of set patterns: ";
+    std::cout<<"input num of set_patterns: ";
     std::cin>>num_of_pattern_set;
     int num_of_nodes;
     std::cout<<"input num of elements in each patterns: ";

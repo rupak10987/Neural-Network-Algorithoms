@@ -7,13 +7,13 @@ void fetch_ins(float **ins,int filenumber,int size_of_image)
 {
     std::string str;
     str = std::to_string(filenumber);
-    str=str+".txt";
+    str="BINARY_IMAGES\\"+str+".txt";
     const char*  filename = str.c_str();
     std::cout<<filename<<std::endl;
 
     char chr[100];
-    sprintf(chr,"input%d",filenumber);
-    outtextxy(25+filenumber*(size_of_image),size_of_image+20,chr);
+    sprintf(chr,"pattern%d",filenumber);
+    outtextxy(25+(filenumber*(size_of_image+10)),size_of_image+20,chr);
 
     std::ifstream inputFile(filename);
     if (!inputFile)
@@ -53,7 +53,7 @@ void fetch_miu(float **ins,int sample_miu_no,int size_of_image)
 {
     std::string str;
     str = std::to_string(sample_miu_no);
-    str="miu"+str+".txt";
+    str="BINARY_IMAGES\\miu"+str+".txt";
     const char*  filename = str.c_str();
     std::cout<<filename<<std::endl;
     std::ifstream inputFile(filename);
