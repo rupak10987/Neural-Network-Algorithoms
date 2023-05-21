@@ -28,13 +28,13 @@ public:
     float speed=210;
     float throttle=0;
     float mass=210;
-    void update_car(class CAR* autocar)
+    void update_car()
     {
         this->accelaration=this->throttle/mass; //a=f/m
         this->speed=this->speed+this->accelaration*delta_time; //v=u+at
-        //if(this->speed>210)
-            //this->speed=210;
-        this->posY-=(autocar->speed-this->speed)*delta_time;//slightly changed
+        this->posY-=this->speed*delta_time;//slightly changed
+        if(posY<=-25)
+            posY=525;
     }
     void set_throttle(float Fthrottle)
     {
@@ -60,16 +60,15 @@ int main()
 
     class CAR *car_FUZZY=new CAR();
     car_FUZZY->accelaration=0;
-    car_FUZZY->speed=0;
+    car_FUZZY->speed=197;
     car_FUZZY->throttle=0;
     car_FUZZY->posX=75;
-    car_FUZZY->update_car(car_AUTO);
 
     while(true)
     {
 //DELTATIME AND FPS COUNTING
-        delta_time =0.001;//clock() - oldTime;
-        double fps = (1.0 / delta_time) * 1000;
+        delta_time =clock() - oldTime;//0.001;//
+        delta_time/=1000;
         oldTime = clock();
 
 
@@ -82,8 +81,8 @@ int main()
         float THROTTLE=Apply_Rule_Base_And_Defuzzy(&miu_speed,&miu_accelaration);
         std::cout<<THROTTLE<<std::endl;
         car_FUZZY->set_throttle(THROTTLE);
-        car_FUZZY->update_car(car_AUTO);
-
+        car_FUZZY->update_car();
+        car_AUTO->update_car();
         //graphics goes here;
         fuzzy_graphic::visualize(car_FUZZY->posX,car_FUZZY->posY,car_AUTO->posX,car_AUTO->posY);
     }
