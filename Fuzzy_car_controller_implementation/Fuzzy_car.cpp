@@ -2,6 +2,8 @@
 #include<time.h>
 #include<conio.h>
 #include<math.h>
+#include<graphics.h>
+#include"Graphic_visualization.h"
 int NL=30,NM=60,NS=90,ZE=120,PS=150,PM=180,PL=210;
 struct uXX
 {
@@ -13,8 +15,82 @@ struct uXX
     float uPM=0;
     float uPL=0;
 };
+
 float delta_time;
 float oldTime=0;
+
+class CAR
+{
+public:
+    float posX=25;
+    float posY=250;
+    float accelaration=0;
+    float speed=210;
+    float throttle=0;
+    float mass=210;
+    void update_car(class CAR* autocar)
+    {
+        this->accelaration=this->throttle/mass; //a=f/m
+        this->speed=this->speed+this->accelaration*delta_time; //v=u+at
+        //if(this->speed>210)
+            //this->speed=210;
+        this->posY-=(autocar->speed-this->speed)*delta_time;//slightly changed
+    }
+    void set_throttle(float Fthrottle)
+    {
+        this->throttle=Fthrottle;
+    }
+};
+
+//func declarations
+float minimum(float a,float b);
+float maximum(float a,float b);
+float CALC_AREA(float height);
+float Apply_Rule_Base_And_Defuzzy(struct uXX* speed,struct uXX* accelaration);
+float calculate_miu(float del1, float del2, float m1, float m2);
+void membership(class CAR* car_FUZZY,const char* str,struct uXX* miu);
+
+
+int main()
+{
+    fuzzy_graphic::init_window(500,500);
+    //initialize the two cars one is random speed
+    //another is controlled by fuzzy controller
+    class CAR *car_AUTO=new CAR();
+
+    class CAR *car_FUZZY=new CAR();
+    car_FUZZY->accelaration=0;
+    car_FUZZY->speed=0;
+    car_FUZZY->throttle=0;
+    car_FUZZY->posX=75;
+    car_FUZZY->update_car(car_AUTO);
+
+    while(true)
+    {
+//DELTATIME AND FPS COUNTING
+        delta_time =0.001;//clock() - oldTime;
+        double fps = (1.0 / delta_time) * 1000;
+        oldTime = clock();
+
+
+// find membership value
+        struct uXX miu_speed;
+        struct uXX miu_accelaration;
+        membership(car_FUZZY,"speed",&miu_speed);
+        membership(car_FUZZY,"accelaration",&miu_accelaration);
+
+        float THROTTLE=Apply_Rule_Base_And_Defuzzy(&miu_speed,&miu_accelaration);
+        std::cout<<THROTTLE<<std::endl;
+        car_FUZZY->set_throttle(THROTTLE);
+        car_FUZZY->update_car(car_AUTO);
+
+        //graphics goes here;
+        fuzzy_graphic::visualize(car_FUZZY->posX,car_FUZZY->posY,car_AUTO->posX,car_AUTO->posY);
+    }
+
+    return 0;
+}
+
 float minimum(float a,float b)
 {
     if(a<=b)
@@ -29,29 +105,6 @@ float maximum(float a,float b)
     else
         return b;
 }
-class CAR
-{
-public:
-    float posX=250;
-    float posY=250;
-    float accelaration=0;
-    float speed=210;
-    float throttle=0;
-    float mass=210;
-    void update_car(class CAR* autocar)
-    {
-        this->accelaration=this->throttle/mass; //a=f/m
-        this->speed=this->speed+this->accelaration*delta_time; //v=u+at
-        if(this->speed>210)
-            this->speed=210;
-        this->posY+=(autocar->speed-this->speed)*delta_time;//slightly changed
-    }
-    void set_throttle(float Fthrottle)
-    {
-        this->throttle=Fthrottle;
-    }
-};
-
 //defuzzification-based on center of gravity method
 float CALC_AREA(float height)
 {
@@ -184,41 +237,4 @@ void membership(class CAR* car_FUZZY,const char* str,struct uXX* miu)
         break;
     }
     }
-}
-int main()
-{
-    //initialize the two cars one is random speed
-    //another is controlled by fuzzy controller
-    class CAR *car_AUTO=new CAR();
-
-    class CAR *car_FUZZY=new CAR();
-    car_FUZZY->accelaration=71;
-    car_FUZZY->speed=101;
-    car_FUZZY->throttle=1;
-    car_FUZZY->posX=200;
-
-
-    //while(true)
-    {
-//DELTATIME AND FPS COUNTING
-        delta_time = clock() - oldTime;
-        double fps = (1.0 / delta_time) * 1000;
-        oldTime = clock();
-
-
-// find membership value
-        struct uXX miu_speed;
-        struct uXX miu_accelaration;
-        membership(car_FUZZY,"speed",&miu_speed);
-        membership(car_FUZZY,"accelaration",&miu_accelaration);
-
-        float THROTTLE=Apply_Rule_Base_And_Defuzzy(&miu_speed,&miu_accelaration);
-        std::cout<<THROTTLE<<std::endl;
-        car_FUZZY->set_throttle(THROTTLE);
-        car_FUZZY->update_car(car_AUTO);
-
-        //graphics goes here;
-    }
-
-    return 0;
 }
