@@ -2,6 +2,8 @@
 #include<time.h>
 #include<conio.h>
 #include<math.h>
+#include<graphics.h>
+#include"Graphic_visualization.h"
 int NL=30,NM=60,NS=90,ZE=120,PS=150,PM=180,PL=210;
 struct uXX
 {
@@ -26,6 +28,22 @@ public:
     float speed=120;
     float throttle=0;
     float mass=1;
+    void update()
+    {
+        this->accelaration=this->throttle/this->mass;
+        this->speed+=this->accelaration*delta_time;
+        this->posY-=this->speed*delta_time;
+        //wrapping
+        if(this->posY<-25)
+            this->posY=525;
+        else if(this->posY>=525)
+            this->posY=-25;
+    }
+
+    void set_throttle(float fthrottle)
+    {
+        this->throttle=fthrottle;
+    }
 
 };
 
@@ -40,31 +58,43 @@ void membership(class CAR* car_FUZZY,const char* str,struct uXX* miu);
 
 int main()
 {
+    fuzzy_graphic::init_window(500,500);
     //initialize the two cars one is random speed
     //another is controlled by fuzzy controller
     class CAR *car_AUTO=new CAR();
+    car_AUTO->posX=50;
+    car_AUTO->speed=210;
+    car_AUTO->accelaration=0;
+    car_AUTO->throttle=0;
 
     class CAR *car_FUZZY=new CAR();
-    std::cout<<"Speed Difference = ";
-    std::cin>>car_FUZZY->speed;
-    std::cout<<"acceleration = ";
-    std::cin>>car_FUZZY->accelaration;
-
-//DELTATIME AND FPS COUNTING
-    delta_time =clock() - oldTime;//0.001;//
-    delta_time/=1000;
-    oldTime = clock();
-
+    car_FUZZY->posX=100;
+    car_FUZZY->speed=5;
+    car_FUZZY->accelaration=5;
+    car_FUZZY->throttle=1;
 
 //find membership value
-    struct uXX miu_speed;
-    struct uXX miu_accelaration;
-    membership(car_FUZZY,"speed",&miu_speed);
-    membership(car_FUZZY,"accelaration",&miu_accelaration);
+    while(true)
+    {
+        struct uXX miu_speed;
+        struct uXX miu_accelaration;
+        membership(car_FUZZY,"speed",&miu_speed);
+        membership(car_FUZZY,"accelaration",&miu_accelaration);
 
-    float THROTTLE=Apply_Rule_Base_And_Defuzzy(&miu_speed,&miu_accelaration);
-    std::cout<<"THROTTLE = sum(Ai*Xi) / sum(Ai)"<<std::endl;
-    std::cout<<"THROTTLE = "<<THROTTLE<<std::endl;
+        float THROTTLE=Apply_Rule_Base_And_Defuzzy(&miu_speed,&miu_accelaration);
+        car_FUZZY->set_throttle(THROTTLE);
+
+        //DELTATIME AND FPS COUNTING
+        delta_time =clock() - oldTime;//0.001;//
+        delta_time/=1000;
+        oldTime = clock();
+
+        //update car and visualize
+        car_FUZZY->update();
+        car_AUTO->update();
+        fuzzy_graphic::visualize(car_FUZZY->posX,car_FUZZY->posY,car_AUTO->posX,car_AUTO->posY,car_FUZZY->speed,car_FUZZY->accelaration,car_FUZZY->throttle,car_AUTO->speed);
+    }
+
 
     return 0;
 }
@@ -186,151 +216,151 @@ float Apply_Rule_Base_And_Defuzzy(struct uXX* speed,struct uXX* accelaration)
 {
 ///RULE BASE
 
-//IF speed difference is NL AND acceleration is NL THEN throttle is PL
+//1.IF speed difference is NL AND acceleration is NL THEN throttle is PL
     float hPL=minimum(speed->uNL,accelaration->uNL);
 
-//IF speed difference is NL AND acceleration is NM THEN throttle is PL
+//2.IF speed difference is NL AND acceleration is NM THEN throttle is PL
     float hPL2=minimum(speed->uNL,accelaration->uNM);
 
-//IF speed difference is NL AND acceleration is NS THEN throttle is PM
+//3.IF speed difference is NL AND acceleration is NS THEN throttle is PM
     float hPM=minimum(speed->uNL,accelaration->uNS);
 
-//IF speed difference is NL AND acceleration is ze THEN throttle is PM
+//4.IF speed difference is NL AND acceleration is ze THEN throttle is PM
     float hPM2=minimum(speed->uNL,accelaration->uZE);
 
-//IF speed difference is NL AND acceleration is PS THEN throttle is PM
+//5.IF speed difference is NL AND acceleration is PS THEN throttle is PM
     float hPM3=minimum(speed->uNL,accelaration->uPS);
 
-//IF speed difference is NL AND acceleration is PM THEN throttle is ze
+//6.IF speed difference is NL AND acceleration is PM THEN throttle is ze
     float hZE=minimum(speed->uNL,accelaration->uPM);
 
-//IF speed difference is NL AND acceleration is PL THEN throttle is NS
+//7.IF speed difference is NL AND acceleration is PL THEN throttle is NS
     float hNS=minimum(speed->uNL,accelaration->uPL);
 
-//IF speed difference is NM AND acceleration is NL THEN throttle is PM
+//8.IF speed difference is NM AND acceleration is NL THEN throttle is PM
     float hPM4=minimum(speed->uNM,accelaration->uNL);
 
-//IF speed difference is NM AND acceleration is NM THEN throttle is PM
+//9.IF speed difference is NM AND acceleration is NM THEN throttle is PM
     float hPM5=minimum(speed->uNM,accelaration->uNM);
 
-//IF speed difference is NM AND acceleration is NS THEN throttle is ze
+//10.IF speed difference is NM AND acceleration is NS THEN throttle is ze
     float hZE2=minimum(speed->uNM,accelaration->uNS);
 
-//IF speed difference is NM AND acceleration is ze THEN throttle is NS
+//11.IF speed difference is NM AND acceleration is ze THEN throttle is NS
     float hNS2=minimum(speed->uNM,accelaration->uZE);
 
-//IF speed difference is NM AND acceleration is PS THEN throttle is NS
+//12.IF speed difference is NM AND acceleration is PS THEN throttle is NS
     float hNS3=minimum(speed->uNM,accelaration->uPS);
 
-//IF speed difference is NM AND acceleration is PM THEN throttle is NS
+//13.IF speed difference is NM AND acceleration is PM THEN throttle is NS
     float hNS4=minimum(speed->uNM,accelaration->uPM);
 
-//IF speed difference is NM AND acceleration is PL THEN throttle is NM
+//14.IF speed difference is NM AND acceleration is PL THEN throttle is NM
     float hNM=minimum(speed->uNM,accelaration->uPL);
 
-//IF speed difference is NS AND acceleration is NL THEN throttle is PM
+//15.IF speed difference is NS AND acceleration is NL THEN throttle is PM
     float hPM6=minimum(speed->uNS,accelaration->uNL);
 
-//IF speed difference is NS AND acceleration is NM THEN throttle is ze
+//16.IF speed difference is NS AND acceleration is NM THEN throttle is ze
     float hZE3=minimum(speed->uNS,accelaration->uNM);
 
-//IF speed difference is NS AND acceleration is NS THEN throttle is NS
+//17.IF speed difference is NS AND acceleration is NS THEN throttle is NS
     float hNS5=minimum(speed->uNS,accelaration->uNS);
 
-//IF speed difference is NS AND acceleration is ze THEN throttle is NM
+//18.IF speed difference is NS AND acceleration is ze THEN throttle is NM
     float hNM2=minimum(speed->uNS,accelaration->uZE);
 
-//IF speed difference is NS AND acceleration is PS THEN throttle is NM
+//19.IF speed difference is NS AND acceleration is PS THEN throttle is NM
     float hNM3=minimum(speed->uNS,accelaration->uPS);
 
-//IF speed difference is NS AND acceleration is PM THEN throttle is NM
+//20.IF speed difference is NS AND acceleration is PM THEN throttle is NM
     float hNM4=minimum(speed->uNS,accelaration->uPM);
 
-//IF speed difference is NS AND acceleration is PL THEN throttle is NM
+//21.IF speed difference is NS AND acceleration is PL THEN throttle is NM
     float hNM5=minimum(speed->uNS,accelaration->uPL);
 
-//IF speed difference is ze AND acceleration is NL THEN throttle is PS
+//22.IF speed difference is ze AND acceleration is NL THEN throttle is PS
     float hPS=minimum(speed->uZE,accelaration->uNL);
 
-//IF speed difference is ze AND acceleration is NM THEN throttle is PM
+//23.IF speed difference is ze AND acceleration is NM THEN throttle is PM
     float hPM7=minimum(speed->uZE,accelaration->uNM);
 
-//IF speed difference is ze AND acceleration is NS THEN throttle is ze
+//24.IF speed difference is ze AND acceleration is NS THEN throttle is ze
     float hZE4=minimum(speed->uZE,accelaration->uNS);
 
-//IF speed difference is ze AND acceleration is ze THEN throttle is ze
+//25.IF speed difference is ze AND acceleration is ze THEN throttle is ze
     float hZE5=minimum(speed->uZE,accelaration->uZE);
 
-//IF speed difference is ze AND acceleration is PS THEN throttle is NS
+//26.IF speed difference is ze AND acceleration is PS THEN throttle is NS
     float hNS6=minimum(speed->uZE,accelaration->uPS);
 
-//IF speed difference is ze AND acceleration is PM THEN throttle is NM
+//27.IF speed difference is ze AND acceleration is PM THEN throttle is NM
     float hNM6=minimum(speed->uZE,accelaration->uPM);
 
-//IF speed difference is ze AND acceleration is PL THEN throttle is NM
+//28.IF speed difference is ze AND acceleration is PL THEN throttle is NM
     float hNM7=minimum(speed->uZE,accelaration->uPL);
 
-//IF speed difference is PS AND acceleration is NL THEN throttle is PS
+//29.IF speed difference is PS AND acceleration is NL THEN throttle is PS
     float hPS2=minimum(speed->uPS,accelaration->uNL);
 
-//IF speed difference is PS AND acceleration is NM THEN throttle is NS
+//30.IF speed difference is PS AND acceleration is NM THEN throttle is NS
     float hNS7=minimum(speed->uPS,accelaration->uNM);
 
-//IF speed difference is PS AND acceleration is NS THEN throttle is NM
+//31.IF speed difference is PS AND acceleration is NS THEN throttle is NM
     float hNM8=minimum(speed->uPS,accelaration->uNS);
 
-//IF speed difference is PS AND acceleration is ze THEN throttle is NM
+//32.IF speed difference is PS AND acceleration is ze THEN throttle is NM
     float hNM9=minimum(speed->uPS,accelaration->uZE);
 
-//IF speed difference is PS AND acceleration is PS THEN throttle is NM
+//33.IF speed difference is PS AND acceleration is PS THEN throttle is NM
     float hNM10=minimum(speed->uPS,accelaration->uPS);
 
-//IF speed difference is PS AND acceleration is PM THEN throttle is NS
+//34.IF speed difference is PS AND acceleration is PM THEN throttle is NS
     float hNS8=minimum(speed->uPS,accelaration->uPM);
 
-//IF speed difference is PS AND acceleration is PL THEN throttle is NM
+//35.IF speed difference is PS AND acceleration is PL THEN throttle is NM
     float hNM11=minimum(speed->uPS,accelaration->uPL);
 
-//IF speed difference is PM AND acceleration is NL THEN throttle is NS
+//36.IF speed difference is PM AND acceleration is NL THEN throttle is NS
     float hNS9=minimum(speed->uPM,accelaration->uNL);
 
-//IF speed difference is PM AND acceleration is NM THEN throttle is NS
+//37.IF speed difference is PM AND acceleration is NM THEN throttle is NS
     float hNS10=minimum(speed->uPM,accelaration->uNM);
 
-//IF speed difference is PM AND acceleration is NS THEN throttle is NM
+//38.IF speed difference is PM AND acceleration is NS THEN throttle is NM
     float hNM12=minimum(speed->uPM,accelaration->uNS);
 
-//IF speed difference is PM AND acceleration is ze THEN throttle is NM
+//39.IF speed difference is PM AND acceleration is ze THEN throttle is NM
     float hNM13=minimum(speed->uPM,accelaration->uZE);
 
-//IF speed difference is PM AND acceleration is PS THEN throttle is NM
+//40.IF speed difference is PM AND acceleration is PS THEN throttle is NM
     float hNM14=minimum(speed->uPM,accelaration->uPS);
 
-//IF speed difference is PM AND acceleration is PM THEN throttle is NM
+//41.IF speed difference is PM AND acceleration is PM THEN throttle is NM
     float hNM15=minimum(speed->uPM,accelaration->uPM);
 
-//IF speed difference is PM AND acceleration is PL THEN throttle is NS
+//42.IF speed difference is PM AND acceleration is PL THEN throttle is NS
     float hNS11=minimum(speed->uPM,accelaration->uPL);
 
-//IF speed difference is PL AND acceleration is NL THEN throttle is NS
+//43.IF speed difference is PL AND acceleration is NL THEN throttle is NS
     float hNS12=minimum(speed->uPL,accelaration->uNL);
 
-//IF speed difference is PL AND acceleration is NM THEN throttle is NM
+//44.IF speed difference is PL AND acceleration is NM THEN throttle is NM
     float hNM16=minimum(speed->uPL,accelaration->uNM);
 
-//IF speed difference is PL AND acceleration is NS THEN throttle is NM
+//45.IF speed difference is PL AND acceleration is NS THEN throttle is NM
     float hNM17=minimum(speed->uPL,accelaration->uNS);
 
-//IF speed difference is PL AND acceleration is ze THEN throttle is NM
+//46.IF speed difference is PL AND acceleration is ze THEN throttle is NM
     float hNM18=minimum(speed->uPL,accelaration->uZE);
 
-//IF speed difference is PL AND acceleration is PS THEN throttle is NM
+//47.IF speed difference is PL AND acceleration is PS THEN throttle is NM
     float hNM19=minimum(speed->uPL,accelaration->uPS);
 
-//IF speed difference is PL AND acceleration is PM THEN throttle is NS
+//48.IF speed difference is PL AND acceleration is PM THEN throttle is NS
     float hNS13=minimum(speed->uPL,accelaration->uPM);
 
-//IF speed difference is PL AND acceleration is PL THEN throttle is NL
+//49.IF speed difference is PL AND acceleration is PL THEN throttle is NL
     float hNL=minimum(speed->uPL,accelaration->uPL);
 
 
@@ -388,9 +418,7 @@ float Apply_Rule_Base_And_Defuzzy(struct uXX* speed,struct uXX* accelaration)
 ///DEFUZZYFICATION
 
     float SUM_Ai_Xi=CALC_AREA(hPL)*PL+CALC_AREA(hPM)*PM+CALC_AREA(hPS)*PS+CALC_AREA(hZE)*ZE+CALC_AREA(hNS)*NS+CALC_AREA(hNM)*NM+CALC_AREA(hNL)*NL;
-    std::cout<<"sum(Ai*Xi) = "<<SUM_Ai_Xi<<"\n";
     float SUM_AI=CALC_AREA(hPL)+CALC_AREA(hPM)+CALC_AREA(hPS)+CALC_AREA(hZE)+CALC_AREA(hNS)+CALC_AREA(hNM)+CALC_AREA(hNL);
-    std::cout<<"sum(Ai) = "<<SUM_AI<<"\n";
     if(SUM_AI!=0)
         return SUM_Ai_Xi/SUM_AI;
     else
