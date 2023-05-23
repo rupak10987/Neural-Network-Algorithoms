@@ -20,6 +20,6 @@ If a segment of previously learnt pattern is given as input it is able to retriv
 <br />
 # FUZZY Controller
 <br />
-https://github.com/rupak10987/Neural-Network-Lab-Works/blob/bb965ef7b6c9d4ae6d24e60aea5d83076f374033/Fuzzy_ROCKET_controller/fuzz_rockt.gif
+[Visualisation](https://github.com/rupak10987/Neural-Network-Lab-Works/blob/72254d849a0562d7c3016dbc7207d74d6cf53716/Fuzzy_ROCKET_controller/fuzz_rockt.gif)
 
 
