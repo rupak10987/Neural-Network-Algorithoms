@@ -18,4 +18,8 @@ The Netrork remembers Patterns. </br>
 If a segment of previously learnt pattern is given as input it is able to retrive the whole pattern
 ![Hopfield Network Img](https://github.com/rupak10987/Neural-Network-Lab-Works/blob/64b91d8498f1566452cf05c0360c843a3aa916d4/HOPFIELD%20network/ss.PNG)
 <br />
- 
+# FUZZY Controller
+<br />
+![MLP Img](https://github.com/rupak10987/Neural-Network-Lab-Works/blob/bb965ef7b6c9d4ae6d24e60aea5d83076f374033/Fuzzy_ROCKET_controller/fuzz_rockt.gif)
+
+
