@@ -19,25 +19,27 @@ struct uXX
 float delta_time;
 float oldTime=0;
 
-class CAR
+class ROCKET
 {
 public:
-    float posX=25;
-    float posY=250;
+    float posX=0;
+    float posY=0;
     float accelaration=0;
     float speed=120;
     float throttle=0;
     float mass=1;
+    float friction_c=PL;
     void update()
     {
-        this->accelaration=this->throttle/this->mass;
+        this->friction_c=rand()%PL;//a random noise to the friction co efficient
+        this->accelaration=(this->throttle-this->friction_c)/this->mass;
         this->speed+=this->accelaration*delta_time;
         this->posY-=this->speed*delta_time;
         //wrapping
-        if(this->posY<-25)
-            this->posY=525;
-        else if(this->posY>=525)
-            this->posY=-25;
+        if(this->posY<0)
+            this->posY=700;
+        else if(this->posY>=700)
+            this->posY=0;
     }
 
     void set_throttle(float fthrottle)
@@ -53,46 +55,48 @@ float maximum(float a,float b);
 float CALC_AREA(float height);
 float Apply_Rule_Base_And_Defuzzy(struct uXX* speed,struct uXX* accelaration);
 float calculate_miu(float del1, float del2, float m1, float m2);
-void membership(class CAR* car_FUZZY,const char* str,struct uXX* miu);
+void membership(class ROCKET* ROCKET_FUZZY,const char* str,struct uXX* miu);
 
 
 int main()
 {
-    fuzzy_graphic::init_window(500,500);
-    //initialize the two cars one is random speed
+    srand(time(0));
+    fuzzy_graphic::init_window(700,700);
+    //initialize the two ROCKETs one is random speed
     //another is controlled by fuzzy controller
-    class CAR *car_AUTO=new CAR();
-    car_AUTO->posX=50;
-    car_AUTO->speed=210;
-    car_AUTO->accelaration=0;
-    car_AUTO->throttle=0;
+    class ROCKET *ROCKET_AUTO=new ROCKET();
+    ROCKET_AUTO->posX=50;
+    ROCKET_AUTO->speed=210;
+    ROCKET_AUTO->accelaration=0;
+    ROCKET_AUTO->throttle=0;
 
-    class CAR *car_FUZZY=new CAR();
-    car_FUZZY->posX=100;
-    car_FUZZY->speed=5;
-    car_FUZZY->accelaration=5;
-    car_FUZZY->throttle=1;
+    class ROCKET *ROCKET_FUZZY=new ROCKET();
+    ROCKET_FUZZY->posX=75;
+    ROCKET_FUZZY->posY=650;
+    ROCKET_FUZZY->speed=0;
+    ROCKET_FUZZY->accelaration=0;
+    ROCKET_FUZZY->throttle=0;
 
 //find membership value
     while(true)
     {
         struct uXX miu_speed;
         struct uXX miu_accelaration;
-        membership(car_FUZZY,"speed",&miu_speed);
-        membership(car_FUZZY,"accelaration",&miu_accelaration);
+        membership(ROCKET_FUZZY,"speed",&miu_speed);
+        membership(ROCKET_FUZZY,"accelaration",&miu_accelaration);
 
         float THROTTLE=Apply_Rule_Base_And_Defuzzy(&miu_speed,&miu_accelaration);
-        car_FUZZY->set_throttle(THROTTLE);
+        ROCKET_FUZZY->set_throttle(THROTTLE);
 
         //DELTATIME AND FPS COUNTING
         delta_time =clock() - oldTime;//0.001;//
         delta_time/=1000;
         oldTime = clock();
 
-        //update car and visualize
-        car_FUZZY->update();
-        car_AUTO->update();
-        fuzzy_graphic::visualize(car_FUZZY->posX,car_FUZZY->posY,car_AUTO->posX,car_AUTO->posY,car_FUZZY->speed,car_FUZZY->accelaration,car_FUZZY->throttle,car_AUTO->speed);
+        //update ROCKET and visualize
+        ROCKET_FUZZY->update();
+       // ROCKET_AUTO->update();
+        fuzzy_graphic::visualize(ROCKET_FUZZY->posX,ROCKET_FUZZY->posY,ROCKET_FUZZY->speed,ROCKET_FUZZY->accelaration,ROCKET_FUZZY->throttle);
     }
 
 
@@ -142,13 +146,13 @@ float calculate_miu(float del1, float del2, float m1, float m2)
         return 1;
 }
 
-void membership(class CAR* car_FUZZY,const char* str,struct uXX* miu)
+void membership(class ROCKET* ROCKET_FUZZY,const char* str,struct uXX* miu)
 {
     float x;
     if(str=="speed")
-        x=car_FUZZY->speed;
+        x=ROCKET_FUZZY->speed;
     else if(str=="accelaration")
-        x=car_FUZZY->accelaration;
+        x=ROCKET_FUZZY->accelaration;
 
     int inp=(int)(x/30);
     if(inp<0)
