@@ -86,6 +86,12 @@ std::cout<<std::endl;
                 {
                     if(dist<distances[n][0])
                     {
+                        //r_shift
+                        if(n<k)
+                        {
+                        distances[n+1][0]=distances[n][0];
+                        distances[n+1][1]=distances[n][1];
+                        }
                         distances[n][0]=dist; // k closest distances from the test subject
                         distances[n][1]=Train_data[j][2]; //and their classes
                         break;
