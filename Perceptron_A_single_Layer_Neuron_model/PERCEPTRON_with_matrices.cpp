@@ -5,7 +5,8 @@ void MATRIX_MUL(float** MAT_A,int num_of_row_A
                 ,float** MAT_B
                 ,int num_of_row_B
                 ,int num_of_col_B
-                ,float** result);
+                ,float** result
+                );
 int main()
 {
 srand(time(0));

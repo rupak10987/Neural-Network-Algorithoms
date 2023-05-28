@@ -9,7 +9,7 @@ int main()
 {
     srand(time(0));
     int gd = DETECT, gm;
-    initwindow(1000, 500);
+    initwindow(1000, 700);
     int num_of_layers;
     //each layer will have diff num of nodes but fully connected with nodes of other neighboring layers
     int *num_of_nodes_per_layer;
