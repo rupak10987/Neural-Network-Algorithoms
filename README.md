@@ -1,4 +1,4 @@
-# Neural-Network-Lab-Works
+# Neural-Network-Algorithoms
 This repository consists of codes regarding different Neural Network algorithom implementation from scratch Using C++.</br>
 # Single Layer Perceptron
 Widrow-Hoff-delta rule based learning:<br />
