@@ -94,7 +94,7 @@ int main()
 
     float **simplified_weight;
     simplified_weight=new float*[population_size];
-    for(int i=0;i<chromosome_length/gene_length;i++)
+    for(int i=0;i<population_size;i++)
     {
         simplified_weight[i]=new float[chromosome_length/gene_length];
     }
@@ -102,10 +102,10 @@ int main()
     float *Fitness;
     Fitness=new float[population_size];
 //learning
-    int MAX_GENERATION=5000;
+    int MAX_GENERATION=100;
     while(MAX_GENERATION>=0)
     {
-        std::cout<<"\nGENERATION = "<<5000-MAX_GENERATION<<std::endl;
+        std::cout<<"\nGENERATION = "<<100-MAX_GENERATION<<std::endl;
         //extract weights form all the chromosomes
         float k=2;
         cleardevice();
@@ -125,7 +125,7 @@ int main()
                 }
             }
         //after extraction,visualizing the weights;
-        std::cout<<"\n extracted weight from chromosome"<<c<<":\n";
+     /*   std::cout<<"\n extracted weight from chromosome"<<c<<":\n";
         for(int i=0; i<num_of_layers; i++)
         {
             std::cout<<"W_MATRIC L"<<i<<"-L"<<i+1<<std::endl;
@@ -138,7 +138,7 @@ int main()
                 std::cout<<"\n";
             }
             std::cout<<"\n";
-        }
+        }*/
 
 //forward pass
         for(int i=0; i<num_of_layers; i++)
@@ -188,7 +188,7 @@ int main()
         GENETIC::marriage(chromosomes,population_size,chromosome_length);
         //mutate each of them with small mutation probability
         for(int c=0;c<population_size;c++)
-            GENETIC::mutation(0.03,chromosomes[c],chromosome_length);
+            GENETIC::mutation(0.1,chromosomes[c],chromosome_length);
         //visualize offsprings chromosomes in console
         std::cout<<"\nNEW OFFSPRINGS:\n";
         for(int i=0; i<population_size; i++)
@@ -203,7 +203,7 @@ int main()
         swapbuffers();
         MAX_GENERATION--;
     }
-    std::cout<<"\n total iterations "<<5000-MAX_GENERATION<<"\n";
+    std::cout<<"\n total iterations "<<100-MAX_GENERATION<<"\n";
 
 //Trial and error.........
     while(true)
