@@ -43,6 +43,7 @@ int main()
             WEIGHTS[i][j]=new float[num_of_nodes_per_layer[i+1]];//collumn=next layer nodes
         }
     }
+
     //network i/o
     for(int i=0; i<num_of_layers+1; i++)
     {
@@ -121,7 +122,7 @@ int main()
                     }
                 }
             }
-            NEURAL_GRAPHIC::view_chromosome(chromosomes,population_size,chromosome_length,gene_length,160,500);
+            NEURAL_GRAPHIC::view_chromosome(chromosomes,population_size,chromosome_length,gene_length,50,500);
             //after extraction,visualizing the weights in console;
 //forward pass
             for(int i=0; i<num_of_layers; i++)

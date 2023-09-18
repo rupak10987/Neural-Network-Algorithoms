@@ -75,26 +75,7 @@ void draw_filled_circle(int a,int b,int r,class Col col,float sigma)
     floodfill(a,b,WHITE);
 }
 
-void set_view_params(int number_of_layers,int* nodes_in_layer,int* node_radius,int* node_to_node_distance)
-{
-int max_nodes=-100;
-for(int i=0;i<number_of_layers+1;i++)
-{
-if(max_nodes<nodes_in_layer[i])
-    max_nodes=nodes_in_layer[i];
-}
-int x,y,a,b,c,d,m,n;//x=node diameter,y=node_to_node_distance,a=number_of_layer+1, b=number_of_layer,c=max_node_in_any_layer,d=c-1;
-a=number_of_layers+1;
-b=number_of_layers;
-c=max_nodes;
-d=c-1;
-m=750;
-n=450;
-y=(m*c-n*a)/(b*c-a*d);
-x=(m-b*y)/a;
-*node_radius=x/2;
-*node_to_node_distance=y;
-}
+
 
 void view_node(float **Net,int layer_no,int node_num)
 {
@@ -108,12 +89,12 @@ void view_node(float **Net,int layer_no,int node_num)
     {
         float sig=(Net[0][i])/max_;
         class Col c(255,255,255);
-        draw_filled_circle((layer_no+1)*200,(i+1)*100,20,c,sig);
+        draw_filled_circle(50+(layer_no)*90,(i+1)*70,10,c,sig);
 
         float number=Net[0][i];
         char ch[10];
         sprintf(ch,"%f",number);
-        outtextxy((layer_no+1)*200-20,(i+1)*100+20,ch);
+        outtextxy(50+(layer_no)*90-40,(i+1)*70+10,ch);////
     }
 
 }
@@ -133,8 +114,8 @@ void view_network(int layer,float **weights,int num_of_row,int num_of_collumn)
     {
         for(int j=0; j<num_of_row; j++)
         {
-            class Vec3 p((layer+1)*200,(j+1)*100,0);
-            class Vec3 q((layer+2)*200,(i+1)*100,0);
+            class Vec3 p(50+(layer)*90,(j+1)*70,0);
+            class Vec3 q(50+(layer+1)*90,(i+1)*70,0);
             float sigma=(weights[j][i]*10)/max_weight;
             int r,g,b;
             if(sigma>=0)
@@ -173,11 +154,13 @@ void view_chromosome(char** chromosomes,int population,int chromosome_length,int
 {
 float r=255,g=255,b=0;
 class Col col((int)r,(int)g,(int)b);
+
+char ch[10];
+sprintf(ch,"Each row represents a chromosome");
+outtextxy(50,450,ch);
+
 for(int c=0;c<population;c++)
 {
-char ch[10];
-sprintf(ch,"CHROMOSOME %d",c);
-outtextxy(start_x_pos-140,start_y_pos+(c*20)-6,ch);
 for(int i=0;i<chromosome_length;i++)
 {
     int u;
@@ -189,8 +172,8 @@ for(int i=0;i<chromosome_length;i++)
     col.g=g;
     col.b=0;
     setfillstyle(SOLID_FILL,COLOR(col.r,col.g,col.b));
-    circle(start_x_pos+(i*10),start_y_pos+(c*20),5);
-    floodfill(start_x_pos+(i*10),start_y_pos+(c*20),WHITE);
+    circle(start_x_pos+(i*6),start_y_pos+(c*10),3);
+    floodfill(start_x_pos+(i*6),start_y_pos+(c*10),WHITE);
 }
 
 }
