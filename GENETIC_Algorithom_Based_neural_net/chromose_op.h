@@ -62,7 +62,7 @@ void marriage(char** chromosome,int population,int ch_len)
 
     }
 
-    for(int i=0;i<population-1;i++)
+    for(int i=0;i<population-1;i+=2)
     {
         GENETIC::crossover(chromosome[i],chromosome[i+1],ch_len);
     }

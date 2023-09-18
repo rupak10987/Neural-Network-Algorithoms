@@ -84,17 +84,12 @@ int main()
         chromosomes[i]=new char[chromosome_length+1];//+1 for '\0', which indicates end of a chromose
         GENETIC::gen_random_chromosome(chromosomes[i],chromosome_length);
         //visualizing each chromosomes
-        std::cout<<"chromosome "<<i<<": ";
-        for(int j=0; j<chromosome_length; j++)
-        {
-            std::cout<<chromosomes[i][j];
-        }
-        std::cout<<std::endl;
+        //NEURAL_GRAPHIC::view_chromosome(chromosomes,population_size,chromosome_length,gene_length,20,300);
     }
 
     float **simplified_weight;
     simplified_weight=new float*[population_size];
-    for(int i=0;i<population_size;i++)
+    for(int i=0; i<population_size; i++)
     {
         simplified_weight[i]=new float[chromosome_length/gene_length];
     }
@@ -102,84 +97,69 @@ int main()
     float *Fitness;
     Fitness=new float[population_size];
 //learning
-    int MAX_GENERATION=100;
+    int MAX_GENERATION=500;
     while(MAX_GENERATION>=0)
     {
-        std::cout<<"\nGENERATION = "<<100-MAX_GENERATION<<std::endl;
         //extract weights form all the chromosomes
-        float k=2;
         cleardevice();
-        for(int c=0;c<population_size;c++)//for each chromosome
+        float k=2;
+        for(int c=0; c<population_size; c++) //for each chromosome
         {
+            cleardevice();
+            char gn[100];
+            sprintf(gn,"GENERATION: %d",500-MAX_GENERATION);
+            outtextxy(450,20,gn);
             GENETIC::weight_extraction(chromosomes[c],simplified_weight[c],chromosome_length,gene_length);//collecting weights in simple format
             int w_c=0;
-            for(int L=0;L<num_of_layers;L++)
+            for(int L=0; L<num_of_layers; L++)
             {
-                for(int col=0;col<num_of_nodes_per_layer[L+1];col++)
+                for(int col=0; col<num_of_nodes_per_layer[L+1]; col++)
                 {
-                    for(int row=0;row<num_of_nodes_per_layer[L];row++)
+                    for(int row=0; row<num_of_nodes_per_layer[L]; row++)
                     {
                         WEIGHTS[L][row][col]=simplified_weight[c][w_c];
                         w_c++;
                     }
                 }
             }
-        //after extraction,visualizing the weights;
-     /*   std::cout<<"\n extracted weight from chromosome"<<c<<":\n";
-        for(int i=0; i<num_of_layers; i++)
-        {
-            std::cout<<"W_MATRIC L"<<i<<"-L"<<i+1<<std::endl;
-            for(int j=0; j<num_of_nodes_per_layer[i]; j++)
-            {
-                for(int k=0; k<num_of_nodes_per_layer[i+1]; k++)
-                {
-                    std::cout<< WEIGHTS[i][j][k]<<"\t";
-                }
-                std::cout<<"\n";
-            }
-            std::cout<<"\n";
-        }*/
-
+            NEURAL_GRAPHIC::view_chromosome(chromosomes,population_size,chromosome_length,gene_length,180,500);
+            //after extraction,visualizing the weights in console;
 //forward pass
-        for(int i=0; i<num_of_layers; i++)
-        {
-            MATRIX_OPS::MATRIX_MUL(INOUTS[i],1
-                                   ,num_of_nodes_per_layer[i]
-                                   ,WEIGHTS[i],num_of_nodes_per_layer[i]
-                                   ,num_of_nodes_per_layer[i+1],INOUTS[i+1]);
-            MATRIX_OPS::MATRIX_SIGMOID_TRANSFORM(INOUTS[i+1],1,num_of_nodes_per_layer[i+1],k);
+            for(int i=0; i<num_of_layers; i++)
+            {
+                MATRIX_OPS::MATRIX_MUL(INOUTS[i],1
+                                       ,num_of_nodes_per_layer[i]
+                                       ,WEIGHTS[i],num_of_nodes_per_layer[i]
+                                       ,num_of_nodes_per_layer[i+1],INOUTS[i+1]);
+                MATRIX_OPS::MATRIX_SIGMOID_TRANSFORM(INOUTS[i+1],1,num_of_nodes_per_layer[i+1],k);
 
-            //visualize to window
-            NEURAL_GRAPHIC::view_node(INOUTS[i],i,num_of_nodes_per_layer[i]);
-            NEURAL_GRAPHIC::view_network(i,WEIGHTS[i]
-                                         ,num_of_nodes_per_layer[i]
-                                         ,num_of_nodes_per_layer[i+1]);
+                //visualize to window
+                NEURAL_GRAPHIC::view_network(i,WEIGHTS[i]
+                                             ,num_of_nodes_per_layer[i]
+                                             ,num_of_nodes_per_layer[i+1]);
+                NEURAL_GRAPHIC::view_node(INOUTS[i],i,num_of_nodes_per_layer[i]);
 
-        }
-        NEURAL_GRAPHIC::view_node(INOUTS[num_of_layers],num_of_layers,num_of_nodes_per_layer[num_of_layers]);
-        for(int ex=0; ex<num_of_nodes_per_layer[num_of_layers]; ex++)
-        {
+
+            }
+            NEURAL_GRAPHIC::view_node(INOUTS[num_of_layers],num_of_layers,num_of_nodes_per_layer[num_of_layers]);
+            for(int ex=0; ex<num_of_nodes_per_layer[num_of_layers]; ex++)
+            {
+                char ch[100];
+                sprintf(ch,"EXPECTED OUTPUT %0.3f",expected[ex]);
+                outtextxy(800,20*(ex+1),ch);
+            }
+            //calculate errors
+            float ep=0;
+            for(int i=0; i<num_of_nodes_per_layer[num_of_layers]; i++)
+            {
+                ep+=pow(expected[i]-INOUTS[num_of_layers][0][i],2);
+            }
+            ep/=2;
+            Fitness[c]=1.0/ep;
             char ch[100];
-            sprintf(ch,"EXPECTED OUTPUT %0.3f",expected[ex]);
-            outtextxy(800,20*(ex+1),ch);
-        }
-        //calculate errors
-        float ep=0;
-        for(int i=0; i<num_of_nodes_per_layer[num_of_layers]; i++)
-        {
-            ep+=pow(expected[i]-INOUTS[num_of_layers][0][i],2);
-        }
-        ep/=2;
-        Fitness[c]=1.0/ep;
-        //output show
-        for(int ou=0; ou<num_of_nodes_per_layer[num_of_layers]; ou++)
-        {
-            std::cout<<"out"<<ou<<" : "<<INOUTS[num_of_layers][0][ou]<<"\n";
-        }
-        std::cout<<"Ep = "<<ep<<"\n";
-        char ch[100];
-        sprintf(ch,"EP = %f",ep);
-        outtextxy(800,20*(num_of_nodes_per_layer[num_of_layers]+1),ch);
+            sprintf(ch,"Fitness = %f",Fitness[c]);
+            outtextxy(800,20*(num_of_nodes_per_layer[num_of_layers]+1),ch);
+            swapbuffers();
         }
         //GA based backward_propagation
         //mating pool
@@ -187,23 +167,14 @@ int main()
         //select pairs of chromosomes to have sex
         GENETIC::marriage(chromosomes,population_size,chromosome_length);
         //mutate each of them with small mutation probability
-        for(int c=0;c<population_size;c++)
+        for(int c=0; c<population_size; c++)
             GENETIC::mutation(0.1,chromosomes[c],chromosome_length);
         //visualize offsprings chromosomes in console
-        std::cout<<"\nNEW OFFSPRINGS:\n";
-        for(int i=0; i<population_size; i++)
-        {
-            std::cout<<"chromosome "<<i<<": ";
-            for(int j=0; j<chromosome_length; j++)
-            {
-                std::cout<<chromosomes[i][j];
-            }
-            std::cout<<std::endl;
-        }
+
         swapbuffers();
         MAX_GENERATION--;
     }
-    std::cout<<"\n total iterations "<<100-MAX_GENERATION<<"\n";
+    std::cout<<"\n total iterations "<<500-MAX_GENERATION<<"\n";
 
 //Trial and error.........
     while(true)
@@ -229,7 +200,7 @@ int main()
         }
         ep/=2;
         char chr[100];
-        sprintf(chr,"EP = %f",ep);
+        sprintf(chr,"Error = %f",ep);
         outtextxy(800,20*(num_of_nodes_per_layer[num_of_layers]+1),chr);
         swapbuffers();
         char c;
@@ -242,3 +213,41 @@ int main()
     closegraph();
     return 0;
 }
+
+///some codes for visualizing in consoles [paste them after the comment in the main code]
+
+//[paste before]visualizing each chromosomes
+        /*std::cout<<"chromosome "<<i<<": ";
+        for(int j=0; j<chromosome_length; j++)
+        {
+         std::cout<<chromosomes[i][j];
+        }
+        std::cout<<std::endl;*/
+
+//[paste before]after extraction,visualizing the weights in console;
+/*std::cout<<"\n extracted weight from chromosome"<<c<<":\n";
+            for(int i=0; i<num_of_layers; i++)
+            {
+                std::cout<<"W_MATRIC L"<<i<<"-L"<<i+1<<std::endl;
+                for(int j=0; j<num_of_nodes_per_layer[i]; j++)
+                {
+                    for(int k=0; k<num_of_nodes_per_layer[i+1]; k++)
+                    {
+                        std::cout<< WEIGHTS[i][j][k]<<"\t";
+                    }
+                    std::cout<<"\n";
+                }
+                std::cout<<"\n";
+            }*/
+
+//[paste before]visualize offsprings chromosomes in console
+         /*std::cout<<"\nNEW OFFSPRINGS:\n";
+         for(int i=0; i<population_size; i++)
+         {
+             std::cout<<"chromosome "<<i<<": ";
+             for(int j=0; j<chromosome_length; j++)
+             {
+                 std::cout<<chromosomes[i][j];
+             }
+             std::cout<<std::endl;
+         }*/
