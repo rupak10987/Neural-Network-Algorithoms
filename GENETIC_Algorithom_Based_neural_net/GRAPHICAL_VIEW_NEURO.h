@@ -70,26 +70,32 @@ void draw_line(class Vec3 P,class Vec3 P1,class Col col)
 }
 void draw_filled_circle(int a,int b,int r,class Col col,float sigma)
 {
-    float x1=0;
-    float x2=0;
-    float y=b-r;
-    while(y<=b+r)
-    {
-        float c=pow(r,2)-pow(a,2)-pow(y,2)+2*b*y-pow(b,2);
-        c=-c;
-        x1=(2*a+pow((4*pow(a,2))-4*c,0.5))/2.0;
-        x2=(2*a-pow((4*pow(a,2))-4*c,0.5))/2.0;
-        class Vec3 p(x1,y,0);
-        class Vec3 q(x2,y,0);
-        col.r*=(sigma);
-        col.g*=(sigma);
-        col.b*=(sigma);
-        draw_line(p,q,col);
-        y+=1;//10*(1.1-sigma);
-    }
+    setfillstyle(SOLID_FILL,COLOR(col.r*sigma,col.g*sigma,col.b*sigma));
     circle(a,b,r);
-
+    floodfill(a,b,WHITE);
 }
+
+void set_view_params(int number_of_layers,int* nodes_in_layer,int* node_radius,int* node_to_node_distance)
+{
+int max_nodes=-100;
+for(int i=0;i<number_of_layers+1;i++)
+{
+if(max_nodes<nodes_in_layer[i])
+    max_nodes=nodes_in_layer[i];
+}
+int x,y,a,b,c,d,m,n;//x=node diameter,y=node_to_node_distance,a=number_of_layer+1, b=number_of_layer,c=max_node_in_any_layer,d=c-1;
+a=number_of_layers+1;
+b=number_of_layers;
+c=max_nodes;
+d=c-1;
+m=750;
+n=450;
+y=(m*c-n*a)/(b*c-a*d);
+x=(m-b*y)/a;
+*node_radius=x/2;
+*node_to_node_distance=y;
+}
+
 void view_node(float **Net,int layer_no,int node_num)
 {
     float max_=-1000;
@@ -102,7 +108,7 @@ void view_node(float **Net,int layer_no,int node_num)
     {
         float sig=(Net[0][i])/max_;
         class Col c(255,255,255);
-        draw_filled_circle((layer_no+1)*200,(i+1)*100,20,c,sig);///////////
+        draw_filled_circle((layer_no+1)*200,(i+1)*100,20,c,sig);
 
         float number=Net[0][i];
         char ch[10];

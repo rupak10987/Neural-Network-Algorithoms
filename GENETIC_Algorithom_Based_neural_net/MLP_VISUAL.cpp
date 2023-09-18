@@ -84,7 +84,6 @@ int main()
         chromosomes[i]=new char[chromosome_length+1];//+1 for '\0', which indicates end of a chromose
         GENETIC::gen_random_chromosome(chromosomes[i],chromosome_length);
         //visualizing each chromosomes
-        //NEURAL_GRAPHIC::view_chromosome(chromosomes,population_size,chromosome_length,gene_length,20,300);
     }
 
     float **simplified_weight;
@@ -122,7 +121,7 @@ int main()
                     }
                 }
             }
-            NEURAL_GRAPHIC::view_chromosome(chromosomes,population_size,chromosome_length,gene_length,180,500);
+            NEURAL_GRAPHIC::view_chromosome(chromosomes,population_size,chromosome_length,gene_length,160,500);
             //after extraction,visualizing the weights in console;
 //forward pass
             for(int i=0; i<num_of_layers; i++)
